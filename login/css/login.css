@@ -31,9 +31,12 @@ body {
 .text-center img {
     max-width: 150px;
     margin-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* Títulos e textos */
+/* Título e texto do formulário */
 h4 {
     color: #fff;
     font-size: 1.5rem;
@@ -51,15 +54,17 @@ form {
     margin-bottom: 1.5rem;
 }
 
+/* Estilo dos campos de texto */
 .form-label {
     font-size: 1rem;
     margin-bottom: 0.5rem;
 }
 
-/* Estilo para os campos de texto */
+/* Alinhamento do campo de senha */
 .input-group {
     display: flex;
     align-items: center;
+    position: relative;
 }
 
 .input-group input {
@@ -84,7 +89,7 @@ form {
     color: #bbb;
     font-size: 1.25rem;
     cursor: pointer;
-    margin-left: -30px;
+    margin-left: -40px;
 }
 
 /* Botão de Login */
@@ -119,6 +124,7 @@ form {
 @media (max-width: 768px) {
     .card {
         width: 90%;
+        padding: 20px;
     }
 
     .form-label {
@@ -131,5 +137,13 @@ form {
 
     .btn-primary {
         font-size: 1rem;
+    }
+
+    h4 {
+        font-size: 1.25rem;
+    }
+
+    .mt-3 a {
+        font-size: 0.9rem;
     }
 }
