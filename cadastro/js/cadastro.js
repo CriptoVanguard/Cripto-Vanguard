@@ -25,7 +25,7 @@ document.getElementById("senha").addEventListener("input", function () {
     if (/[\W]/.test(senha)) forca++;
 
     const cores = ["red", "orange", "yellow", "green", "darkgreen"];
-    barra.style.width = `${forca * 20}%`;
+    barra.style.width = `${forca * 25}%`;
     barra.style.background = cores[forca - 1] || "red";
 });
 
