@@ -1,144 +1,138 @@
-/* Resetando algumas margens e preenchimentos padrão */
+/* Resetando alguns padrões do navegador */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Corpo do site */
 body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #00b09b, #96c93d);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    color: #fff;
-    text-align: center;
-}
-
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5; /* Cinza claro para não cansar os olhos */
+    color: #333; /* Texto em cinza escuro para facilitar a leitura */
     height: 100vh;
-    width: 100%;
 }
 
+/* Contêiner principal para centralizar o login */
+.container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/* Estilos do cartão de login */
 .card {
-    background-color: #2c3e50;
-    border-radius: 15px;
-    padding: 30px;
+    background-color: #fff; /* Cor de fundo branca para o cartão */
+    border-radius: 10px; /* Bordas arredondadas para um efeito mais suave */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra suave para profundidade */
     width: 100%;
     max-width: 400px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    transition: box-shadow 0.3s ease; /* Transição suave para hover */
 }
 
+/* Estilo do logo */
 .card .text-center img {
+    max-width: 120px;
     margin-bottom: 20px;
 }
 
+/* Título do formulário */
 h4 {
-    color: #ecf0f1;
-    font-size: 24px;
-    font-weight: 500;
+    color: #222;
+    font-size: 1.5rem;
+    font-weight: 600;
     margin-bottom: 20px;
 }
 
+/* Campos do formulário */
 .form-label {
-    font-size: 14px;
-    color: #ecf0f1;
-    text-align: left;
-    margin-bottom: 5px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #666;
 }
 
+/* Estilos de input */
 .form-control {
-    border-radius: 10px;
-    padding: 15px;
-    background-color: #34495e;
-    color: #ecf0f1;
-    border: none;
-    width: 100%;
+    border: 1px solid #ddd; /* Borda suave e clara */
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1rem;
     margin-bottom: 15px;
-    font-size: 16px;
+    transition: border-color 0.3s ease;
 }
 
 .form-control:focus {
-    outline: none;
-    background-color: #1abc9c;
+    border-color: #f39c12; /* Dourado suave ao focar no campo */
+    box-shadow: 0 0 5px rgba(243, 156, 18, 0.4);
 }
 
-.input-group {
-    display: flex;
-    align-items: center;
-}
-
-.input-group .form-control {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-right: none;
-}
-
-.input-group .btn {
-    background-color: #34495e;
-    color: #ecf0f1;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    padding: 12px;
-    cursor: pointer;
+/* Botão de submit */
+.btn-primary {
+    background-color: #f39c12; /* Dourado suave */
     border: none;
-}
-
-.input-group .btn:hover {
-    background-color: #1abc9c;
-}
-
-button[type="submit"] {
-    width: 100%;
+    border-radius: 5px;
     padding: 12px;
-    border-radius: 10px;
-    border: none;
-    background-color: #1abc9c;
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 1rem;
+    color: white;
     cursor: pointer;
-    color: #fff;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
 }
 
-button[type="submit"]:hover {
-    background-color: #16a085;
+.btn-primary:hover {
+    background-color: #e67e22; /* Tom de laranja mais escuro ao passar o mouse */
 }
 
-.mt-3 {
-    margin-top: 20px;
-}
-
-.text-center a {
-    color: #ecf0f1;
+/* Links de recuperação de senha e cadastro */
+a {
+    color: #f39c12;
+    font-size: 0.9rem;
     text-decoration: none;
-    font-size: 14px;
-    transition: color 0.3s;
 }
 
-.text-center a:hover {
-    color: #1abc9c;
+a:hover {
+    text-decoration: underline;
 }
 
-@media (max-width: 480px) {
+/* Alinhamento do formulário de login */
+.mt-3 {
+    margin-top: 10px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Estilo do botão para mostrar/ocultar a senha */
+#togglePassword {
+    background-color: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+}
+
+/* Efeitos de foco do botão de mostrar/ocultar senha */
+#togglePassword:hover {
+    color: #f39c12; /* Dourado no hover */
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 576px) {
     .card {
-        width: 90%;
-        padding: 20px;
+        padding: 15px;
     }
 
     h4 {
-        font-size: 20px;
+        font-size: 1.25rem;
     }
 
     .form-control {
-        font-size: 14px;
+        font-size: 0.9rem;
     }
 
-    button[type="submit"] {
-        font-size: 16px;
+    .btn-primary {
+        font-size: 1rem;
     }
 }
