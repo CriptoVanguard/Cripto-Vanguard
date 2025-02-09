@@ -6,7 +6,7 @@
     <title>Cripto Vanguard - Cadastro</title>
 
     <!-- Favicon -->
-    <link rel="icon" href="../cadastro/assets/logo.png" type="image/png">
+    <link rel="icon" href="assets/logo.png" type="image/png">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <!-- Estilos personalizados -->
-    <link rel="stylesheet" href="../cadastro/css/cadastro.css">
+    <link rel="stylesheet" href="css/cadastro.css">
 </head>
 <body>
 
@@ -24,7 +24,7 @@
         <div class="form-box">
             <!-- Logo -->
             <div class="text-center mb-3">
-                <img src="../cadastro/assets/logo.png" alt="Cripto Vanguard Logo" class="logo">
+                <img src="assets/logo.png" alt="Cripto Vanguard Logo" class="logo">
             </div>
 
             <h2 class="text-center">Criar Conta</h2>
@@ -45,7 +45,7 @@
                     <label for="senha" class="form-label">Senha</label>
                     <div class="input-group">
                         <input type="password" class="form-control" id="senha" placeholder="Digite sua senha" required>
-                        <button type="button" class="btn btn-outline-secondary toggle-password">
+                        <button type="button" class="btn btn-outline-secondary toggle-password" onclick="togglePasswordVisibility('senha')">
                             <i class="fa-solid fa-eye"></i>
                         </button>
                     </div>
@@ -56,7 +56,7 @@
                     <label for="confirmarSenha" class="form-label">Confirme sua Senha</label>
                     <div class="input-group">
                         <input type="password" class="form-control" id="confirmarSenha" placeholder="Confirme sua senha" required>
-                        <button type="button" class="btn btn-outline-secondary toggle-password">
+                        <button type="button" class="btn btn-outline-secondary toggle-password" onclick="togglePasswordVisibility('confirmarSenha')">
                             <i class="fa-solid fa-eye"></i>
                         </button>
                     </div>
@@ -81,7 +81,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Script personalizado -->
-    <script src="../cadastro/js/cadastro.js"></script>
-
+    <script src="js/cadastro.js"></script>
 </body>
 </html>

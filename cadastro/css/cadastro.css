@@ -1,14 +1,14 @@
 /* Tema escuro */
 body {
-    background-color: #121212;
-    color: #fff;
+    background-color: #121212;  /* Fundo escuro para a página */
+    color: #fff;  /* Texto branco para contraste */
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     height: 100vh;
 }
 
-/* Centralização */
+/* Centralização do formulário */
 .container {
     display: flex;
     justify-content: center;
@@ -16,14 +16,14 @@ body {
     min-height: 100vh;
 }
 
-/* Cartão de cadastro */
-.card {
-    background-color: #1e1e1e;
+/* Cartão de formulário */
+.form-box {
+    background-color: #1e1e1e;  /* Fundo escuro para o formulário */
     border-radius: 10px;
     padding: 30px;
     width: 100%;
     max-width: 400px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);  /* Sombras para destacar o formulário */
 }
 
 /* Logo */
@@ -33,36 +33,37 @@ body {
     margin: 0 auto;
 }
 
-/* Texto */
-h4 {
+/* Título */
+h2 {
     font-size: 1.5rem;
     text-align: center;
+    margin-bottom: 20px;
+    color: #fff;  /* Título branco */
 }
 
-/* Campos de entrada */
+/* Estilo para os campos de entrada */
 .input-group {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
 }
 
-.input-custom {
+.form-control {
     flex: 1;
-    background-color: #333;
-    border: 1px solid #444;
+    background-color: #333;  /* Fundo escuro para os campos */
+    border: 1px solid #444;  /* Borda suave */
     border-radius: 5px;
-    color: #fff;
+    color: #fff;  /* Texto branco dentro dos campos */
     padding: 10px;
     font-size: 1rem;
     width: 100%;
 }
 
-.input-custom:focus {
+.form-control:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: #007bff;  /* Cor de foco */
 }
 
-/* Botão de exibir/ocultar senha */
+/* Estilo do botão para mostrar/ocultar senha */
 .toggle-password {
     background-color: #444;
     border: none;
@@ -78,24 +79,7 @@ h4 {
     background-color: #555;
 }
 
-/* Barra de força da senha */
-.progress-container {
-    width: 100%;
-    height: 6px;
-    background: #333;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    display: none; /* Só aparece ao digitar */
-}
-
-.password-strength {
-    height: 6px;
-    width: 0%;
-    border-radius: 5px;
-    transition: width 0.3s ease-in-out;
-}
-
-/* Botão de Cadastro */
+/* Botão de cadastro */
 .btn-primary {
     background-color: #007bff;
     border: none;
@@ -105,39 +89,47 @@ h4 {
     color: #fff;
     cursor: pointer;
     transition: background 0.3s ease;
-    width: 100%;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
+    background-color: #0056b3;  /* Efeito hover no botão */
 }
 
-/* Links */
-.mt-3 a {
+/* Links no final do formulário */
+.text-center a {
     color: #007bff;
     text-decoration: none;
 }
 
-.mt-3 a:hover {
+.text-center a:hover {
     text-decoration: underline;
 }
 
-/* Responsividade */
+/* Estilos do campo de checkbox */
+.form-check-input {
+    margin-top: 7px;
+}
+
+/* Responsividade para telas menores */
 @media (max-width: 768px) {
-    .card {
+    .form-box {
         width: 90%;
         padding: 20px;
     }
 
-    h4 {
+    h2 {
         font-size: 1.25rem;
     }
 
-    .input-custom {
+    .form-control {
         font-size: 0.9rem;
     }
 
     .toggle-password {
+        font-size: 1rem;
+    }
+
+    .btn-primary {
         font-size: 1rem;
     }
 }
