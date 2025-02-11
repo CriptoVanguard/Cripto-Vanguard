@@ -1,28 +1,6 @@
-/* ESTILO GERALA */
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-body{
-    background-color: #000;
-    height: 100vh;
-
-}
-
-.interface{
-    max-width: 100px;
-    margin: 0 50px auto;
-}
-.flex{
-    display: flex;
-}
-
-/* ESTILO DO CABEÇALHO */
 header{
     padding: 40px 4%;
 }
-
 header > .interface{
     display: flex;
     align-items: center;
@@ -30,26 +8,23 @@ header > .interface{
     list-style-type: none;
     font-family: 'Times New Roman', Times, serif;
 }
-
 header a{
-    color: #7d7d7d;
+    color: #000000;
     text-decoration: none;
     display: inline-block;
     transition: 0s;
 }
 header a:hover{
-    color: #fff;
+    color: #00ff08;
     transform: scale(1);
-
 }
 header nav ul {
-        list-style-type: none;
+    display: flex;
+    padding: 0;
+    list-style-type: none;
 }
-
 header nav ul li{
-    display: inline-flex;
-    padding: 0 150px ;
-    
+    padding: 0 20px; 
 }
 header .btn-Login button{
     padding: 10px 40px;
@@ -59,30 +34,8 @@ header .btn-Login button{
     border: 0;
     border-radius:30px;
     cursor: pointer;
-
 }
 header .btn-Login button:hover{
     box-shadow: 0px 0px 8px #00ff08;
-}
-/*ESTILO DO TOPO DO SITE*/
-section.topo-do-site{
-    padding: 40px 4%;
-
-}
-section.topo-do-site.flex{
-    align-items: center;
-    justify-content: center;
-
-}
-.topo-do-site h1{
-    color: #fff;
-    font-size: 40px;
-    line-height: 40px;
-}
-.topo-do-site h1 samp{
-    color: #00ff08;
-}
-.topo-do-site .txt-topo-do-site p{
-    color: #fff;
-    margin: 40px 0px;
+   
 }
