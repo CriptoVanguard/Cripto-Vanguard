@@ -14,20 +14,6 @@ function togglePasswordVisibility(id) {
     }
 }
 
-// Seleciona todos os botões de alternância de senha
-document.querySelectorAll('.toggle-password').forEach((button) => {
-    button.addEventListener('click', () => {
-        const input = button.previousElementSibling;
-        const icon = button.querySelector('i');
-        
-        if (input) {
-            input.type = input.type === 'password' ? 'text' : 'password';
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
-        }
-    });
-});
-
 // Função para verificar a força da senha
 function verificarForcaSenha(senha) {
     let forca = 0;
@@ -145,13 +131,13 @@ if (form) {
                 icon: 'success',
                 confirmButtonText: 'Ok'
             }).then(() => {
-                window.location.href = '/login/login.html'; // Redireciona após o cadastro bem-sucedido
+                window.location.href = '/login';
             });
+
         } catch (error) {
-            console.error('Erro ao enviar dados para o backend:', error);
             Swal.fire({
                 title: 'Erro!',
-                text: error.message || 'Erro ao tentar se comunicar com o servidor',
+                text: error.message || 'Erro desconhecido!',
                 icon: 'error',
                 confirmButtonText: 'Ok'
             });
