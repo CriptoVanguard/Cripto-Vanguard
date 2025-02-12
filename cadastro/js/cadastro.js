@@ -12,6 +12,18 @@ document.querySelectorAll('.toggle-password').forEach((button) => {
     });
 });
 
+// Função para verificar a força da senha
+function verificarForcaSenha(senha) {
+    let forca = 0;
+
+    if (senha.length >= 8) forca++;
+    if (/\d/.test(senha)) forca++;
+    if (/[a-z]/.test(senha)) forca++;
+    if (/[A-Z]/.test(senha)) forca++;
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(senha)) forca++;
+
+    return forca;
+}
 
 // Atualiza a força da senha no frontend
 const senhaInput = document.getElementById('senha');
@@ -95,7 +107,13 @@ if (form) {
     });
 }
 
-
+// Função alternativa para alternar a visibilidade da senha
+function togglePasswordVisibility(id) {
+    const passwordField = document.getElementById(id);
+    if (passwordField) {
+        passwordField.type = passwordField.type === 'password' ? 'text' : 'password';
+    }
+}
 // Incluindo SweetAlert2
 import Swal from 'sweetalert2';
 
