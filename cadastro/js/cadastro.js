@@ -12,18 +12,6 @@ document.querySelectorAll('.toggle-password').forEach((button) => {
     });
 });
 
-// Função para verificar a força da senha
-function verificarForcaSenha(senha) {
-    let forca = 0;
-
-    if (senha.length >= 8) forca++;
-    if (/\d/.test(senha)) forca++;
-    if (/[a-z]/.test(senha)) forca++;
-    if (/[A-Z]/.test(senha)) forca++;
-    if (/[!@#$%^&*(),.?":{}|<>]/.test(senha)) forca++;
-
-    return forca;
-}
 
 // Atualiza a força da senha no frontend
 const senhaInput = document.getElementById('senha');
@@ -107,10 +95,116 @@ if (form) {
     });
 }
 
-// Função alternativa para alternar a visibilidade da senha
+
+// Incluindo SweetAlert2
+import Swal from 'sweetalert2';
+
+// Função para exibir ou ocultar a senha
 function togglePasswordVisibility(id) {
     const passwordField = document.getElementById(id);
-    if (passwordField) {
-        passwordField.type = passwordField.type === 'password' ? 'text' : 'password';
+    const passwordIcon = passwordField.nextElementSibling.querySelector('i');
+    if (passwordField.type === "password") {
+        passwordField.type = "text";
+        passwordIcon.classList.remove('fa-eye');
+        passwordIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = "password";
+        passwordIcon.classList.remove('fa-eye-slash');
+        passwordIcon.classList.add('fa-eye');
     }
 }
+
+// Função para calcular a força da senha
+function calculatePasswordStrength(password) {
+    let strength = 0;
+    if (password.length > 6) strength += 1;
+    if (/[a-z]/.test(password)) strength += 1;
+    if (/[A-Z]/.test(password)) strength += 1;
+    if (/\d/.test(password)) strength += 1;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+
+    return strength;
+}
+
+// Exibe a barra de força de senha
+document.getElementById('senha').addEventListener('input', function () {
+    const password = this.value;
+    const strength = calculatePasswordStrength(password);
+    const strengthMeter = document.getElementById('password-strength');
+
+    // Atualiza a barra de força com base na senha
+    switch (strength) {
+        case 0:
+            strengthMeter.style.width = '0%';
+            strengthMeter.style.backgroundColor = '#ff4d4d';
+            break;
+        case 1:
+            strengthMeter.style.width = '25%';
+            strengthMeter.style.backgroundColor = '#ffcc00';
+            break;
+        case 2:
+            strengthMeter.style.width = '50%';
+            strengthMeter.style.backgroundColor = '#ffcc00';
+            break;
+        case 3:
+            strengthMeter.style.width = '75%';
+            strengthMeter.style.backgroundColor = '#66cc33';
+            break;
+        case 4:
+            strengthMeter.style.width = '100%';
+            strengthMeter.style.backgroundColor = '#66cc33';
+            break;
+    }
+});
+
+// Função para enviar o formulário
+document.getElementById('cadastroForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const nome = document.getElementById('nome').value;
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+
+    const userData = {
+        username: nome,
+        email: email,
+        senha: senha
+    };
+
+    // Enviar dados para o backend
+    fetch('https://cripto-vanguard.onrender.com/cadastro', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                title: 'Sucesso!',
+                text: data.message,
+                icon: 'success',
+                confirmButtonText: 'Ok'
+            }).then(() => {
+                window.location.href = '/login/login.html'; // Redirecionar após sucesso
+            });
+        } else {
+            Swal.fire({
+                title: 'Erro!',
+                text: data.message,
+                icon: 'error',
+                confirmButtonText: 'Tentar novamente'
+            });
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            title: 'Erro!',
+            text: 'Erro ao enviar dados para o backend.',
+            icon: 'error',
+            confirmButtonText: 'Ok'
+        });
+    });
+});

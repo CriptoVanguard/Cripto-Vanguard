@@ -95,6 +95,11 @@ h2 {
     background-color: #0056b3;  /* Efeito hover no botão */
 }
 
+.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Foco suave */
+}
+
 /* Links no final do formulário */
 .text-center a {
     color: #007bff;
@@ -132,4 +137,26 @@ h2 {
     .btn-primary {
         font-size: 1rem;
     }
+}
+
+/* Barra de força de senha */
+.password-strength {
+    width: 0%;
+    height: 5px;
+    margin-top: 10px;
+    border-radius: 5px;
+    transition: width 0.3s ease-in-out;
+}
+
+/* Força da senha - Cores */
+.password-strength.weak {
+    background-color: #ff4d4d; /* Vermelho para senha fraca */
+}
+
+.password-strength.medium {
+    background-color: #ffcc00; /* Amarelo para senha média */
+}
+
+.password-strength.strong {
+    background-color: #00cc00; /* Verde para senha forte */
 }
