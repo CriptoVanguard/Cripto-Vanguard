@@ -32,6 +32,11 @@ pool.connect()
         process.exit(1); // Encerra o servidor se não conectar ao banco
     });
 
+// 🔹 Confirma se o backend está acessando o banco correto
+pool.query('SELECT current_database();')
+    .then(result => console.log('🔍 Conectado ao banco de dados:', result.rows[0].current_database))
+    .catch(err => console.error('❌ Erro ao verificar banco de dados:', err.message));
+
 // 🔹 Middleware
 app.use(express.json());
 app.use(cors());
@@ -56,9 +61,11 @@ app.post('/cadastro', async (req, res) => {
         // 🔹 Hasheia a senha antes de salvar no banco
         const hashedSenha = await bcrypt.hash(senha, 10);
 
-        // 🔹 Insere no banco de dados com o campo created_at
-        const query = 'INSERT INTO usuarios (username, email, password, created_at) VALUES ($1, $2, $3, NOW()) RETURNING id';
-        const novoUsuario = await pool.query(query, [username, email, hashedSenha]);
+        // 🔹 Insere no banco de dados (corrigido: troca 'senha' para 'password')
+        const novoUsuario = await pool.query(
+            "INSERT INTO usuarios (username, email, password) VALUES ($1, $2, $3) RETURNING id",
+            [username, email, hashedSenha]
+        );
 
         res.status(201).json({ 
             success: true, 
