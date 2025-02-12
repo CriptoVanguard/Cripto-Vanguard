@@ -14,6 +14,21 @@ function togglePasswordVisibility(id) {
     }
 }
 
+
+// Seleciona todos os botões de alternância de senha
+document.querySelectorAll('.toggle-password').forEach((button) => {
+    button.addEventListener('click', () => {
+        const input = button.previousElementSibling;
+        const icon = button.querySelector('i');
+        
+        if (input) {
+            input.type = input.type === 'password' ? 'text' : 'password';
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        }
+    });
+});
+
 // Função para verificar a força da senha
 function verificarForcaSenha(senha) {
     let forca = 0;
@@ -30,36 +45,57 @@ function verificarForcaSenha(senha) {
 // Atualiza a força da senha no frontend
 const senhaInput = document.getElementById('senha');
 const senhaStrengthDiv = document.getElementById('password-strength');
-const strengthMeter = document.getElementById('password-strength-meter'); // Seleciona a barra de força
 
-if (senhaInput && senhaStrengthDiv && strengthMeter) {
+if (senhaInput && senhaStrengthDiv) {
     senhaInput.addEventListener('input', () => {
         const forca = verificarForcaSenha(senhaInput.value);
         let forcaTexto = '';
 
-        // Atualiza o texto e a barra de força com base na senha
         if (forca === 0) {
             senhaStrengthDiv.textContent = '';
-            strengthMeter.style.width = '0%';
-            strengthMeter.style.backgroundColor = '#ff4d4d';
         } else if (forca <= 2) {
             senhaStrengthDiv.textContent = 'Senha Fraca';
             senhaStrengthDiv.style.color = 'red';
-            strengthMeter.style.width = '25%';
-            strengthMeter.style.backgroundColor = '#ffcc00';
         } else if (forca === 3) {
             senhaStrengthDiv.textContent = 'Senha Média';
             senhaStrengthDiv.style.color = 'orange';
-            strengthMeter.style.width = '50%';
-            strengthMeter.style.backgroundColor = '#ffcc00';
         } else {
             senhaStrengthDiv.textContent = 'Senha Forte';
             senhaStrengthDiv.style.color = 'green';
-            strengthMeter.style.width = '75%';
-            strengthMeter.style.backgroundColor = '#66cc33';
         }
     });
 }
+
+// Exibe a barra de força de senha
+document.getElementById('senha').addEventListener('input', function () {
+    const password = this.value;
+    const strength = verificarForcaSenha(password);
+    const strengthMeter = document.getElementById('password-strength');
+
+    // Atualiza a barra de força com base na senha
+    switch (strength) {
+        case 0:
+            strengthMeter.style.width = '0%';
+            strengthMeter.style.backgroundColor = '#ff4d4d';
+            break;
+        case 1:
+            strengthMeter.style.width = '25%';
+            strengthMeter.style.backgroundColor = '#ffcc00';
+            break;
+        case 2:
+            strengthMeter.style.width = '50%';
+            strengthMeter.style.backgroundColor = '#ffcc00';
+            break;
+        case 3:
+            strengthMeter.style.width = '75%';
+            strengthMeter.style.backgroundColor = '#66cc33';
+            break;
+        case 4:
+            strengthMeter.style.width = '100%';
+            strengthMeter.style.backgroundColor = '#66cc33';
+            break;
+    }
+});
 
 // Formulário de cadastro
 const form = document.getElementById('cadastroForm');
@@ -131,16 +167,18 @@ if (form) {
                 icon: 'success',
                 confirmButtonText: 'Ok'
             }).then(() => {
-                window.location.href = '/login'; // Redireciona após o cadastro bem-sucedido
+                window.location.href = '/login/login.html'; // Redireciona após o cadastro bem-sucedido
             });
-
         } catch (error) {
+            console.error('Erro ao enviar dados para o backend:', error);
             Swal.fire({
                 title: 'Erro!',
-                text: error.message || 'Erro desconhecido!',
+                text: error.message || 'Erro ao tentar se comunicar com o servidor',
                 icon: 'error',
                 confirmButtonText: 'Ok'
             });
         }
     });
 }
+
+
