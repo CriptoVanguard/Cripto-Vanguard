@@ -47,6 +47,7 @@ h2 {
     align-items: center;
 }
 
+/* Estilo para o campo de senha */
 .form-control {
     flex: 1;
     background-color: #333;  /* Fundo escuro para os campos */
@@ -73,6 +74,7 @@ h2 {
     padding: 10px 15px;
     border-radius: 5px;
     transition: background 0.3s;
+    margin-left: -45px;  /* Ajuste para não sobrepor o campo */
 }
 
 .toggle-password:hover {
@@ -89,6 +91,8 @@ h2 {
     color: #fff;
     cursor: pointer;
     transition: background 0.3s ease;
+    opacity: 0.7; /* Inicia com opacidade reduzida */
+    pointer-events: none; /* Inicialmente desabilitado */
 }
 
 .btn-primary:hover {
@@ -160,4 +164,10 @@ h2 {
 
 .password-strength.strong {
     background-color: #00cc00; /* Verde para senha forte */
+}
+
+/* Habilitar o botão "Cadastrar" somente quando os termos forem aceitos */
+input[type="checkbox"]:checked ~ #cadastroForm .btn-primary {
+    opacity: 1;
+    pointer-events: all;
 }
