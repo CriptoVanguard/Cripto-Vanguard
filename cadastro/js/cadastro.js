@@ -95,7 +95,7 @@ form.addEventListener('submit', async (event) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                nome,
+                username: nome, // alterado para 'username'
                 email,
                 senha
             }),
@@ -105,7 +105,7 @@ form.addEventListener('submit', async (event) => {
     
         if (response.ok) {
             alert('Cadastro realizado com sucesso!');
-            window.location.href = '/login/login.html'; 
+            window.location.href = '/login/login.html'; // Redireciona após o cadastro bem-sucedido
         } else {
             alert(data.message || 'Erro no cadastro');
             console.error('Erro no cadastro:', data);

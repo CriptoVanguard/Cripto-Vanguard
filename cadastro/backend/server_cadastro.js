@@ -3,6 +3,7 @@ console.log(process.env.DB_HOST); // Verifica se a variável DB_HOST foi carrega
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -33,10 +34,10 @@ app.use(cors());
 
 // Rota de cadastro
 app.post('/cadastro', async (req, res) => {
-    const { nome, email, senha } = req.body;
+    const { username, email, senha } = req.body;
     
-    if (!nome || !email || !senha) {
-        return res.status(400).json({ message: 'Nome, email e senha são obrigatórios.' });
+    if (!username || !email || !senha) {
+        return res.status(400).json({ message: 'Username, email e senha são obrigatórios.' });
     }
 
     try {
@@ -48,9 +49,12 @@ app.post('/cadastro', async (req, res) => {
             return res.status(400).json({ message: 'Este email já está registrado.' });
         }
 
+        // Hasheando a senha
+        const hashedSenha = await bcrypt.hash(senha, 10);
+
         // Inserir no banco de dados
-        const query = 'INSERT INTO usuarios (nome, email, senha) VALUES ($1, $2, $3)';
-        await pool.query(query, [nome, email, senha]);
+        const query = 'INSERT INTO usuarios (username, email, password) VALUES ($1, $2, $3)';
+        await pool.query(query, [username, email, hashedSenha]);
         res.status(201).json({ message: 'Usuário cadastrado com sucesso!' });
     } catch (err) {
         console.error('Erro ao cadastrar usuário:', err.message);
