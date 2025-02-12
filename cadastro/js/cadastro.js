@@ -65,6 +65,37 @@ if (senhaInput && senhaStrengthDiv) {
     });
 }
 
+// Exibe a barra de força de senha
+document.getElementById('senha').addEventListener('input', function () {
+    const password = this.value;
+    const strength = verificarForcaSenha(password);
+    const strengthMeter = document.getElementById('password-strength');
+
+    // Atualiza a barra de força com base na senha
+    switch (strength) {
+        case 0:
+            strengthMeter.style.width = '0%';
+            strengthMeter.style.backgroundColor = '#ff4d4d';
+            break;
+        case 1:
+            strengthMeter.style.width = '25%';
+            strengthMeter.style.backgroundColor = '#ffcc00';
+            break;
+        case 2:
+            strengthMeter.style.width = '50%';
+            strengthMeter.style.backgroundColor = '#ffcc00';
+            break;
+        case 3:
+            strengthMeter.style.width = '75%';
+            strengthMeter.style.backgroundColor = '#66cc33';
+            break;
+        case 4:
+            strengthMeter.style.width = '100%';
+            strengthMeter.style.backgroundColor = '#66cc33';
+            break;
+    }
+});
+
 // Formulário de cadastro
 const form = document.getElementById('cadastroForm');
 
@@ -149,33 +180,3 @@ if (form) {
     });
 }
 
-// Exibe a barra de força de senha
-document.getElementById('senha').addEventListener('input', function () {
-    const password = this.value;
-    const strength = calcularForcaSenha(password);
-    const strengthMeter = document.getElementById('password-strength');
-
-    // Atualiza a barra de força com base na senha
-    switch (strength) {
-        case 0:
-            strengthMeter.style.width = '0%';
-            strengthMeter.style.backgroundColor = '#ff4d4d';
-            break;
-        case 1:
-            strengthMeter.style.width = '25%';
-            strengthMeter.style.backgroundColor = '#ffcc00';
-            break;
-        case 2:
-            strengthMeter.style.width = '50%';
-            strengthMeter.style.backgroundColor = '#ffcc00';
-            break;
-        case 3:
-            strengthMeter.style.width = '75%';
-            strengthMeter.style.backgroundColor = '#66cc33';
-            break;
-        case 4:
-            strengthMeter.style.width = '100%';
-            strengthMeter.style.backgroundColor = '#66cc33';
-            break;
-    }
-});

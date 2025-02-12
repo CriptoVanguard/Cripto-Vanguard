@@ -143,10 +143,10 @@ h2 {
 .password-strength {
     width: 0%;
     height: 5px;
-    margin-top: 10px;
+    margin-top: 15px;  /* Aumentei o espaço superior para evitar sobreposição */
+    margin-bottom: 20px;  /* Garantir que haja espaço abaixo da barra */
     border-radius: 5px;
     transition: width 0.3s ease-in-out;
-    background-color: #ff4d4d; /* Inicialmente fraca */
 }
 
 /* Força da senha - Cores */
