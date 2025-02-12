@@ -62,40 +62,7 @@ senhaInput.addEventListener('input', () => {
     }
 });
 
-// Validação do formulário antes de enviar
-const cadastroForm = document.getElementById('cadastroForm');
-
-cadastroForm.addEventListener('submit', (event) => {
-    const nome = document.getElementById('nome').value;
-    const email = document.getElementById('email').value;
-    const senha = document.getElementById('senha').value;
-    const confirmarSenha = document.getElementById('confirmarSenha').value;
-    const termos = document.getElementById('termos').checked;
-
-    // Verificar se os campos estão preenchidos corretamente
-    if (!nome || !email || !senha || !confirmarSenha) {
-        alert('Por favor, preencha todos os campos!');
-        event.preventDefault();
-        return;
-    }
-
-    // Verificar se as senhas coincidem
-    if (senha !== confirmarSenha) {
-        alert('As senhas não coincidem!');
-        event.preventDefault();
-        return;
-    }
-
-    // Verificar se os termos foram aceitos
-    if (!termos) {
-        alert('Você precisa aceitar os termos e a política!');
-        event.preventDefault();
-        return;
-    }
-
-    // Caso passe por todas as validações, o formulário será enviado
-    alert('Cadastro realizado com sucesso!');
-});
+// Formulário de cadastro
 const form = document.getElementById('cadastroForm');
 
 form.addEventListener('submit', async (event) => {
