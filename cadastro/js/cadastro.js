@@ -131,7 +131,7 @@ if (form) {
                 icon: 'success',
                 confirmButtonText: 'Ok'
             }).then(() => {
-                window.location.href = '/login';
+                window.location.href = '/login'; // Redireciona após o cadastro bem-sucedido
             });
 
         } catch (error) {

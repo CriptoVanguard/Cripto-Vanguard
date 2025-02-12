@@ -1,81 +1,172 @@
-/* Estilo básico do formulário */
+/* Tema escuro */
 body {
+    background-color: #121212;
+    color: #fff;
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
+/* Centralização do formulário */
+.container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-color: #f4f4f4;
+    min-height: 100vh;
 }
 
-.form-container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+/* Cartão de formulário */
+.form-box {
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    padding: 30px;
     width: 100%;
     max-width: 400px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-label {
-    font-size: 14px;
-    margin-bottom: 5px;
+/* Logo */
+.logo {
+    max-width: 150px;
     display: block;
+    margin: 0 auto;
 }
 
-input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+/* Título */
+h2 {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fff;
 }
 
-button {
-    width: 100%;
+/* Estilo para os campos de entrada */
+.input-group {
+    display: flex;
+    align-items: center;
+}
+
+/* Estilo para o campo de senha */
+.form-control {
+    flex: 1;
+    background-color: #333;
+    border: 1px solid #444;
+    border-radius: 5px;
+    color: #fff;
     padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-button:hover {
-    background-color: #45a049;
-}
-
-/* Estilo do ícone de visibilidade da senha */
-.password-container {
-    position: relative;
-}
-
-.password-container button {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-}
-
-#password-strength {
-    font-size: 14px;
-    margin-top: 5px;
-}
-
-.strength-meter {
-    height: 5px;
+    font-size: 1rem;
     width: 100%;
-    background-color: #e0e0e0;
-    border-radius: 4px;
-    margin-top: 5px;
 }
 
-/* Cores da barra de força */
-.strength-meter {
-    background-color: #e0e0e0;
-    transition: width 0.3s ease;
+.form-control:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+/* Estilo do botão para mostrar/ocultar senha */
+.toggle-password {
+    background-color: #444;
+    border: none;
+    color: #bbb;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background 0.3s;
+    margin-left: -45px;
+}
+
+.toggle-password:hover {
+    background-color: #555;
+}
+
+/* Botão de cadastro */
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Links no final do formulário */
+.text-center a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.text-center a:hover {
+    text-decoration: underline;
+}
+
+/* Estilos do campo de checkbox */
+.form-check-input {
+    margin-top: 7px;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    .form-box {
+        width: 90%;
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 1.25rem;
+    }
+
+    .form-control {
+        font-size: 0.9rem;
+    }
+
+    .toggle-password {
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        font-size: 1rem;
+    }
+}
+
+/* Barra de força de senha */
+.password-strength {
+    width: 0%;
+    height: 5px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    transition: width 0.3s ease-in-out;
+}
+
+.password-strength.weak {
+    background-color: #ff4d4d;
+}
+
+.password-strength.medium {
+    background-color: #ffcc00;
+}
+
+.password-strength.strong {
+    background-color: #00cc00;
+}
+
+/* Habilitar o botão "Cadastrar" somente quando os termos forem aceitos */
+input[type="checkbox"]:checked ~ #cadastroForm .btn-primary {
+    opacity: 1;
+    pointer-events: all;
 }
