@@ -39,14 +39,22 @@ app.post('/cadastro', async (req, res) => {
         return res.status(400).json({ message: 'Nome, email e senha são obrigatórios.' });
     }
 
-    // Inserir no banco de dados
     try {
+        // Verificando se o email já está registrado
+        const checkEmailQuery = 'SELECT * FROM usuarios WHERE email = $1';
+        const existingUser = await pool.query(checkEmailQuery, [email]);
+
+        if (existingUser.rows.length > 0) {
+            return res.status(400).json({ message: 'Este email já está registrado.' });
+        }
+
+        // Inserir no banco de dados
         const query = 'INSERT INTO usuarios (nome, email, senha) VALUES ($1, $2, $3)';
         await pool.query(query, [nome, email, senha]);
         res.status(201).json({ message: 'Usuário cadastrado com sucesso!' });
     } catch (err) {
-        console.error('Erro ao cadastrar usuário:', err);
-        res.status(500).json({ message: 'Erro ao cadastrar usuário.' });
+        console.error('Erro ao cadastrar usuário:', err.message);
+        res.status(500).json({ message: 'Erro ao cadastrar usuário.', error: err.message });
     }
 });
 

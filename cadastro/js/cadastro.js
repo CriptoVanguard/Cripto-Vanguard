@@ -100,20 +100,21 @@ form.addEventListener('submit', async (event) => {
                 senha
             }),
         });
-
+    
         const data = await response.json();
-
+    
         if (response.ok) {
             alert('Cadastro realizado com sucesso!');
-            // Opcionalmente, redirecionar para a página de login ou outra página
-            window.location.href = '/login/login.html'; // Ajuste conforme necessário
+            window.location.href = '/login/login.html'; 
         } else {
             alert(data.message || 'Erro no cadastro');
+            console.error('Erro no cadastro:', data);
         }
     } catch (error) {
         console.error('Erro ao enviar dados para o backend', error);
         alert('Erro ao tentar se comunicar com o servidor');
     }
+    
 });
 
 // Função para alternar a visibilidade da senha
