@@ -96,3 +96,62 @@ cadastroForm.addEventListener('submit', (event) => {
     // Caso passe por todas as validações, o formulário será enviado
     alert('Cadastro realizado com sucesso!');
 });
+const form = document.getElementById('cadastroForm');
+
+form.addEventListener('submit', async (event) => {
+    event.preventDefault(); // Impede o envio tradicional do formulário
+
+    // Obtendo os dados do formulário
+    const nome = document.getElementById('nome').value;
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+    const confirmarSenha = document.getElementById('confirmarSenha').value;
+    const termos = document.getElementById('termos').checked;
+
+    // Verificando se as senhas coincidem
+    if (senha !== confirmarSenha) {
+        alert('As senhas não coincidem!');
+        return;
+    }
+
+    // Verificando se o usuário aceitou os termos
+    if (!termos) {
+        alert('Você precisa aceitar os termos e política.');
+        return;
+    }
+
+    // Enviando os dados para o backend
+    try {
+        const response = await fetch('https://cripto-vanguard.onrender.com/cadastro', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nome,
+                email,
+                senha
+            }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert('Cadastro realizado com sucesso!');
+            // Opcionalmente, redirecionar para a página de login ou outra página
+            window.location.href = '/login/login.html'; // Ajuste conforme necessário
+        } else {
+            alert(data.message || 'Erro no cadastro');
+        }
+    } catch (error) {
+        console.error('Erro ao enviar dados para o backend', error);
+        alert('Erro ao tentar se comunicar com o servidor');
+    }
+});
+
+// Função para alternar a visibilidade da senha
+function togglePasswordVisibility(id) {
+    const passwordField = document.getElementById(id);
+    const type = passwordField.type === 'password' ? 'text' : 'password';
+    passwordField.type = type;
+}
