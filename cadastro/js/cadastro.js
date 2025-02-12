@@ -1,18 +1,19 @@
 // Função para alternar a visibilidade da senha
 function togglePasswordVisibility(id) {
     const passwordField = document.getElementById(id);
-    const passwordIcon = passwordField.nextElementSibling.querySelector('i');
+    const passwordIcon = passwordField.nextElementSibling.querySelector('i'); // Seleciona o ícone dentro do botão
     
-    if (passwordField.type === "password") {
-        passwordField.type = "text";
-        passwordIcon.classList.remove('fa-eye');
-        passwordIcon.classList.add('fa-eye-slash');
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text'; // Torna o campo visível
+        passwordIcon.classList.remove('fa-eye');  // Altera o ícone
+        passwordIcon.classList.add('fa-eye-slash'); // Ícone de senha oculta
     } else {
-        passwordField.type = "password";
-        passwordIcon.classList.remove('fa-eye-slash');
-        passwordIcon.classList.add('fa-eye');
+        passwordField.type = 'password'; // Torna o campo oculto
+        passwordIcon.classList.remove('fa-eye-slash'); // Altera o ícone
+        passwordIcon.classList.add('fa-eye'); // Ícone de senha visível
     }
 }
+
 
 // Seleciona todos os botões de alternância de senha
 document.querySelectorAll('.toggle-password').forEach((button) => {
