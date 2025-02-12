@@ -14,7 +14,6 @@ function togglePasswordVisibility(id) {
     }
 }
 
-
 // Seleciona todos os botões de alternância de senha
 document.querySelectorAll('.toggle-password').forEach((button) => {
     button.addEventListener('click', () => {
@@ -180,4 +179,3 @@ if (form) {
         }
     });
 }
-
