@@ -9,8 +9,15 @@ const { sendVerificationEmail } = require('./email/sendEmail'); // Verifique se 
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Configuração do CORS personalizada
+const corsOptions = {
+    origin: 'https://criptovanguard.github.io', // Permite apenas esta origem
+    methods: 'GET,POST', // Métodos permitidos
+    allowedHeaders: 'Content-Type', // Cabeçalhos permitidos
+};
+
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors(corsOptions)); // Aplica a configuração personalizada do CORS
 
 // Configuração do banco de dados
 const pool = new Pool({
@@ -78,6 +85,8 @@ app.post('/cadastro', async (req, res) => {
 app.listen(port, () => {
     console.log(`🚀 Servidor rodando na porta ${port}`);
 });
+
+// Rota de verificação de e-mail
 app.get('/api/verify-email', async (req, res) => {
     const { token } = req.query;
 
