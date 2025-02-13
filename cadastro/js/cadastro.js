@@ -1,16 +1,16 @@
 // Função para alternar a visibilidade da senha
 function togglePasswordVisibility(id) {
     const passwordField = document.getElementById(id);
-    const passwordIcon = passwordField.nextElementSibling.querySelector('i'); // Seleciona o ícone dentro do botão
+    const passwordIcon = passwordField?.nextElementSibling?.querySelector('i'); // Seleciona o ícone dentro do botão
     
-    if (passwordField.type === 'password') {
-        passwordField.type = 'text'; // Torna o campo visível
-        passwordIcon.classList.remove('fa-eye');  // Altera o ícone
-        passwordIcon.classList.add('fa-eye-slash'); // Ícone de senha oculta
-    } else {
-        passwordField.type = 'password'; // Torna o campo oculto
-        passwordIcon.classList.remove('fa-eye-slash'); // Altera o ícone
-        passwordIcon.classList.add('fa-eye'); // Ícone de senha visível
+    if (passwordField && passwordIcon) {
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text'; // Torna o campo visível
+            passwordIcon.classList.replace('fa-eye', 'fa-eye-slash'); // Alterna o ícone
+        } else {
+            passwordField.type = 'password'; // Torna o campo oculto
+            passwordIcon.classList.replace('fa-eye-slash', 'fa-eye'); // Alterna o ícone
+        }
     }
 }
 
@@ -30,34 +30,43 @@ function verificarForcaSenha(senha) {
 // Atualiza a força da senha no frontend
 const senhaInput = document.getElementById('senha');
 const senhaStrengthDiv = document.getElementById('password-strength');
-const strengthMeter = document.getElementById('password-strength-meter'); // Seleciona a barra de força
+const strengthMeter = document.getElementById('password-strength-meter');
 
 if (senhaInput && senhaStrengthDiv && strengthMeter) {
     senhaInput.addEventListener('input', () => {
         const forca = verificarForcaSenha(senhaInput.value);
-        let forcaTexto = '';
+        let textoForca = '';
+        let cor = '';
+        let largura = '0%';
 
-        // Atualiza o texto e a barra de força com base na senha
-        if (forca === 0) {
-            senhaStrengthDiv.textContent = '';
-            strengthMeter.style.width = '0%';
-            strengthMeter.style.backgroundColor = '#ff4d4d';
-        } else if (forca <= 2) {
-            senhaStrengthDiv.textContent = 'Senha Fraca';
-            senhaStrengthDiv.style.color = 'red';
-            strengthMeter.style.width = '25%';
-            strengthMeter.style.backgroundColor = '#ffcc00';
-        } else if (forca === 3) {
-            senhaStrengthDiv.textContent = 'Senha Média';
-            senhaStrengthDiv.style.color = 'orange';
-            strengthMeter.style.width = '50%';
-            strengthMeter.style.backgroundColor = '#ffcc00';
-        } else {
-            senhaStrengthDiv.textContent = 'Senha Forte';
-            senhaStrengthDiv.style.color = 'green';
-            strengthMeter.style.width = '75%';
-            strengthMeter.style.backgroundColor = '#66cc33';
+        switch (forca) {
+            case 0:
+                textoForca = '';
+                cor = '#ff4d4d';
+                largura = '0%';
+                break;
+            case 1:
+            case 2:
+                textoForca = 'Senha Fraca';
+                cor = 'red';
+                largura = '25%';
+                break;
+            case 3:
+                textoForca = 'Senha Média';
+                cor = 'orange';
+                largura = '50%';
+                break;
+            default:
+                textoForca = 'Senha Forte';
+                cor = 'green';
+                largura = '75%';
+                break;
         }
+
+        senhaStrengthDiv.textContent = textoForca;
+        senhaStrengthDiv.style.color = cor;
+        strengthMeter.style.width = largura;
+        strengthMeter.style.backgroundColor = cor;
     });
 }
 
@@ -69,10 +78,10 @@ if (form) {
         event.preventDefault(); // Impede o envio tradicional do formulário
 
         // Obtendo os dados do formulário
-        const nome = document.getElementById('nome').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const senha = document.getElementById('senha').value.trim();
-        const confirmarSenha = document.getElementById('confirmarSenha').value.trim();
+        const nome = document.getElementById('nome')?.value.trim();
+        const email = document.getElementById('email')?.value.trim();
+        const senha = document.getElementById('senha')?.value.trim();
+        const confirmarSenha = document.getElementById('confirmarSenha')?.value.trim();
         const termos = document.getElementById('termos')?.checked || false;
 
         // Validações básicas
@@ -106,7 +115,6 @@ if (form) {
             return;
         }
 
-        // Enviando os dados para o backend
         try {
             const response = await fetch('https://cripto-vanguard.onrender.com/cadastro', {
                 method: 'POST',
@@ -120,8 +128,9 @@ if (form) {
                 }),
             });
 
+            const data = await response.json();
+
             if (!response.ok) {
-                const data = await response.json();
                 throw new Error(data.message || 'Erro no cadastro');
             }
 
