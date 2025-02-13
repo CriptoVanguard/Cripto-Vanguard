@@ -3,12 +3,15 @@ require('dotenv').config();  // Carrega as variáveis de ambiente do arquivo .en
 
 // Criação do transportador de e-mail usando as credenciais do .env
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // Pode usar outro serviço de e-mail se necessário
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
     auth: {
-        user: process.env.EMAIL_USER, // E-mail configurado no .env
-        pass: process.env.EMAIL_PASS, // Senha do App configurada no .env
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
     },
 });
+
 
 // Função para enviar o e-mail de verificação
 async function sendVerificationEmail(email, token) {
