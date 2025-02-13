@@ -131,7 +131,7 @@ if (form) {
                 icon: 'success',
                 confirmButtonText: 'Ok'
             }).then(() => {
-                window.location.href = '/login'; // Redireciona após o cadastro bem-sucedido
+                window.location.href = '/Cripto-Vanguard/login/login.html'; // Redireciona para o local correto
             });
 
         } catch (error) {
