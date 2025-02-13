@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const { sendVerificationEmail } = require('./email/sendEmail');
 const jwt = require('jsonwebtoken');
+const moment = require('moment'); // Para lidar com datas
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -84,17 +85,12 @@ app.post('/cadastro', async (req, res) => {
     }
 });
 
-
-
 // Rota para verificação de e-mail
 app.get('/api/verify-email', async (req, res) => {
     const { token } = req.query;
 
-    console.log('Token recebido:', token);
-
     if (!token) {
-        console.log('Nenhum token recebido.');
-        return res.status(400).json({ message: 'Token inválido ou ausente.' });
+        return res.status(400).json({ success: false, message: 'Token inválido ou ausente.' });
     }
 
     try {
@@ -102,22 +98,21 @@ app.get('/api/verify-email', async (req, res) => {
         const result = await pool.query(query, [token]);
 
         if (result.rows.length === 0) {
-            console.log('Usuário não encontrado para este token.');
-            return res.status(404).json({ message: 'Token inválido ou expirado.' });
+            return res.status(404).json({ success: false, message: 'Token inválido ou expirado.' });
         }
 
         const user = result.rows[0];
-        console.log('Usuário encontrado, ID:', user.id);
-
-        // Verificar se o token expirou (aqui assumimos que o token tem validade de 1 hora)
+        
+        // Verificar se o token expirou (validade de 1 hora)
         const tokenExpirationTime = 60 * 60 * 1000; // 1 hora em milissegundos
-        const currentTime = new Date().getTime();
-        const tokenCreatedTime = new Date(user.created_at).getTime();
-        const tokenAge = currentTime - tokenCreatedTime;
+        const tokenCreatedTime = moment(user.created_at).valueOf(); // Conversão de data
+        const tokenAge = moment().valueOf() - tokenCreatedTime;
 
         if (tokenAge > tokenExpirationTime) {
-            console.log('Token expirado.');
-            return res.status(400).json({ message: 'O token expirou. Solicite um novo.' });
+            return res.status(400).json({
+                success: false,
+                message: 'O token expirou. Solicite um novo.'
+            });
         }
 
         // Atualizar o status de verificação do e-mail
@@ -125,13 +120,10 @@ app.get('/api/verify-email', async (req, res) => {
         const updateResult = await pool.query(updateQuery, [user.id]);
 
         if (updateResult.rowCount === 0) {
-            console.log('Erro ao atualizar o status de verificação.');
-            return res.status(500).json({ message: 'Erro ao verificar o e-mail.' });
+            return res.status(500).json({ success: false, message: 'Erro ao verificar o e-mail.' });
         }
 
-        console.log('Email verificado com sucesso!');
-
-        // Retornar a URL de redirecionamento
+        // Resposta de sucesso com redirecionamento
         res.json({
             success: true,
             message: 'E-mail verificado com sucesso!',
@@ -139,10 +131,9 @@ app.get('/api/verify-email', async (req, res) => {
         });
     } catch (error) {
         console.error('Erro no backend ao verificar e-mail:', error);
-        res.status(500).json({ message: 'Erro ao verificar e-mail.' });
+        res.status(500).json({ success: false, message: 'Erro ao verificar e-mail.' });
     }
 });
-
 
 // Função de login de usuário
 app.post('/api/login', async (req, res) => {
@@ -187,7 +178,6 @@ app.post('/api/login', async (req, res) => {
         res.status(500).json({ success: false, message: 'Erro ao autenticar usuário.' });
     }
 });
-
 
 app.listen(port, () => {
     console.log(`🚀 Servidor rodando na porta ${port}`);
