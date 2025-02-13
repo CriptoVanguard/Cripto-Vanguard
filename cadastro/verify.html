@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Conta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        .message {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        .btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Verifique sua Conta</h1>
+    <p id="statusMessage">Verificando...</p>
+    <button id="redirectBtn" class="btn" style="display:none" onclick="window.location.href='/login'">Ir para o Login</button>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        if (!token) {
+            document.getElementById('statusMessage').textContent = 'Token inválido ou ausente.';
+        } else {
+            // Faz a requisição para o servidor para validar o token
+            fetch(`/api/verify-email?token=${token}`, {
+                method: 'GET',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('statusMessage').textContent = 'Conta verificada com sucesso!';
+                    document.getElementById('redirectBtn').style.display = 'inline-block';
+                } else {
+                    document.getElementById('statusMessage').textContent = 'Falha na verificação. Tente novamente ou entre em contato com o suporte.';
+                }
+            })
+            .catch(error => {
+                document.getElementById('statusMessage').textContent = 'Erro ao verificar o e-mail.';
+                console.error(error);
+            });
+        }
+    </script>
+
+</body>
+</html>

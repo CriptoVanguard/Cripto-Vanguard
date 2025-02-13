@@ -125,13 +125,14 @@ if (form) {
                 throw new Error(data.message || 'Erro no cadastro');
             }
 
+            // Exibe a mensagem de sucesso de cadastro
             Swal.fire({
                 title: 'Sucesso!',
-                text: 'Cadastro realizado com sucesso!',
+                text: 'Cadastro realizado com sucesso. Verifique seu e-mail para confirmar sua conta.',
                 icon: 'success',
                 confirmButtonText: 'Ok'
             }).then(() => {
-                window.location.href = '/Cripto-Vanguard/login/login.html'; // Redireciona para o local correto
+                window.location.href = '/Cripto-Vanguard/login/login.html'; // Redireciona para o login
             });
 
         } catch (error) {
