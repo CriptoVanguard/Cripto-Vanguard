@@ -118,3 +118,16 @@ if (data.success) {
         }
     });
 }
+fetch('/api/verify-email?token=' + token)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Redireciona para a URL recebida na resposta
+            window.location.href = data.redirectUrl;
+        } else {
+            alert(data.message); // Exibe a mensagem de erro, se houver
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao verificar o e-mail:', error);
+    });
