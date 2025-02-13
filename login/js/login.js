@@ -52,7 +52,7 @@ loginForm.addEventListener('submit', async function (e) {
 
         // Caso os campos estejam preenchidos, enviar os dados para autenticação no backend
         try {
-            const response = await fetch('/api/login', { // Enviar login para backend (você deve implementar a rota no backend)
+            const response = await fetch('https://cripto-vanguard.onrender.com/api/login', { // Certifique-se de usar a URL completa do seu backend
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }) // Enviar email e senha para o backend
