@@ -99,3 +99,44 @@ function showNotification(message) {
         text: message,
     });
 }
+// Exemplo de código para a requisição do token de verificação
+const urlParams = new URLSearchParams(window.location.search);
+const token = urlParams.get('token');
+
+if (token) {
+    // Fazer a requisição para verificar o email
+    fetch(`/api/verify-email?token=${token}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                // Usar SweetAlert para mostrar a mensagem
+                if (data.message === 'Email verificado com sucesso!') {
+                    Swal.fire({
+                        title: 'Sucesso!',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonText: 'Ok'
+                    }).then(() => {
+                        // Você pode redirecionar ou realizar outra ação aqui
+                        window.location.href = '/login';
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Erro!',
+                        text: data.message,
+                        icon: 'error',
+                        confirmButtonText: 'Ok'
+                    });
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao verificar o e-mail:', error);
+            Swal.fire({
+                title: 'Erro!',
+                text: 'Houve um problema ao tentar verificar seu e-mail.',
+                icon: 'error',
+                confirmButtonText: 'Ok'
+            });
+        });
+}
