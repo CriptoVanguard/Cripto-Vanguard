@@ -41,7 +41,7 @@ if (senhaInput && senhaStrengthDiv && strengthMeter) {
 
         switch (forca) {
             case 0:
-                textoForca = '';
+                textoForca = 'Senha Muito Fraca';
                 cor = '#ff4d4d';
                 largura = '0%';
                 break;
@@ -56,10 +56,15 @@ if (senhaInput && senhaStrengthDiv && strengthMeter) {
                 cor = 'orange';
                 largura = '50%';
                 break;
+            case 4:
+                textoForca = 'Senha Boa';
+                cor = 'yellow';
+                largura = '75%';
+                break;
             default:
                 textoForca = 'Senha Forte';
                 cor = 'green';
-                largura = '75%';
+                largura = '100%';
                 break;
         }
 
@@ -68,6 +73,12 @@ if (senhaInput && senhaStrengthDiv && strengthMeter) {
         strengthMeter.style.width = largura;
         strengthMeter.style.backgroundColor = cor;
     });
+}
+
+// Função para validar e-mail
+function validarEmail(email) {
+    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return regex.test(email);
 }
 
 // Formulário de cadastro
@@ -89,6 +100,16 @@ if (form) {
             Swal.fire({
                 title: 'Erro!',
                 text: 'Todos os campos são obrigatórios.',
+                icon: 'error',
+                confirmButtonText: 'Ok'
+            });
+            return;
+        }
+
+        if (!validarEmail(email)) {
+            Swal.fire({
+                title: 'Erro!',
+                text: 'O e-mail informado não é válido.',
                 icon: 'error',
                 confirmButtonText: 'Ok'
             });

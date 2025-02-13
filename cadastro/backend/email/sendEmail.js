@@ -35,6 +35,12 @@ async function sendVerificationEmail(email, token) {
     };
 
     try {
+        // Verificando se as variáveis de ambiente estão configuradas corretamente
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+            console.error('❌ Credenciais de e-mail não configuradas corretamente no .env');
+            throw new Error('Credenciais de e-mail não configuradas.');
+        }
+
         // Envia o e-mail de verificação
         await transporter.sendMail(mailOptions);
         console.log('✅ E-mail de verificação enviado!');
