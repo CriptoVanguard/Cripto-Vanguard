@@ -14,6 +14,20 @@ togglePassword.addEventListener('click', function () {
     togglePassword.innerHTML = passwordField.type === 'password' ? '👁️' : '🙈';
 });
 
+// Função para exibir mensagens de sucesso ou erro usando SweetAlert
+function showAlert(icon, title, text, redirectUrl = null) {
+    console.log(`Alert triggered - ${title}: ${text}`);
+    Swal.fire({
+        icon: icon,
+        title: title,
+        text: text,
+    }).then(() => {
+        if (redirectUrl) {
+            window.location.href = redirectUrl;
+        }
+    });
+}
+
 // Opção para mostrar um alerta caso o formulário de login seja enviado sem os campos preenchidos
 const loginForm = document.getElementById('loginForm');
 loginForm.addEventListener('submit', async function (e) {
@@ -37,47 +51,36 @@ loginForm.addEventListener('submit', async function (e) {
         console.log("Form validation passed, sending request to backend.");
 
         // Caso os campos estejam preenchidos, enviar os dados para autenticação no backend
-        const response = await fetch('/api/login', { // Enviar login para backend (você deve implementar a rota no backend)
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }) // Enviar email e senha para o backend
-        });
-
-        console.log("Request sent to /api/login, waiting for response.");
-        const data = await response.json();
-        console.log("Response from backend received:", data);
-
-        if (data.success) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Bem-vindo!',
-                text: 'Você foi logado com sucesso.',
-            }).then(() => {
-                window.location.href = "dashboard.html"; // Substitua com a URL de destino
+        try {
+            const response = await fetch('/api/login', { // Enviar login para backend (você deve implementar a rota no backend)
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }) // Enviar email e senha para o backend
             });
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Erro!',
-                text: data.message || 'Falha no login, tente novamente.',
-            });
+
+            console.log("Request sent to /api/login, waiting for response.");
+            
+            // Se o código de status da resposta for 200
+            if (!response.ok) {
+                console.error("Login request failed with status:", response.status);
+                showAlert('error', 'Erro!', 'Falha ao autenticar. Tente novamente.');
+                return;
+            }
+
+            const data = await response.json();
+            console.log("Response from backend received:", data);
+
+            if (data.success) {
+                showAlert('success', 'Bem-vindo!', data.message, 'dashboard.html'); // Substitua com a URL de destino
+            } else {
+                showAlert('error', 'Erro!', data.message || 'Falha no login, tente novamente.');
+            }
+        } catch (error) {
+            console.error("Error during login request:", error);
+            showAlert('error', 'Erro!', 'Houve um erro ao tentar fazer login.');
         }
     }
 });
-
-// Função para exibir mensagens de sucesso ou erro usando SweetAlert
-function showAlert(icon, title, text, redirectUrl = null) {
-    console.log(`Alert triggered - ${title}: ${text}`);
-    Swal.fire({
-        icon: icon,
-        title: title,
-        text: text,
-    }).then(() => {
-        if (redirectUrl) {
-            window.location.href = redirectUrl;
-        }
-    });
-}
 
 // Função para verificar o token de email na URL
 window.onload = async () => {
@@ -119,78 +122,3 @@ window.onload = async () => {
         showAlert('error', 'Erro!', 'Houve um erro ao verificar o seu e-mail. Tente novamente.');
     }
 };
-
-// Código restante para o login (formulário de login etc.)
-document.querySelector('#login-form').addEventListener('submit', function (event) {
-    event.preventDefault();
-    console.log("Login form submit triggered.");
-
-    const email = document.querySelector('#email').value;
-    const password = document.querySelector('#password').value;
-    console.log(`User input - Email: ${email}, Password: ${password ? '****' : 'empty'}`);
-
-    // Lógica para autenticação do usuário
-    fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-    })
-        .then(response => {
-            console.log("Response received from /api/login.");
-            return response.json();
-        })
-        .then(data => {
-            console.log("Login response data:", data);
-            if (data.success) {
-                showAlert('success', 'Bem-vindo!', data.message, '/dashboard'); // Redireciona para o dashboard
-            } else {
-                showAlert('error', 'Erro!', data.message || 'Falha no login, tente novamente.');
-            }
-        })
-        .catch(error => {
-            console.error('Error during login process:', error);
-            showAlert('error', 'Erro!', 'Houve um erro ao tentar fazer login.');
-        });
-});
-
-// Exemplo de código para a requisição do token de verificação
-const urlParams = new URLSearchParams(window.location.search);
-const token = urlParams.get('token');
-
-if (token) {
-    console.log(`Verifying email with token ${token}...`);
-    // Fazer a requisição para verificar o email
-    fetch(`/api/verify-email?token=${token}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log("Verification token response:", data);
-            if (data.message) {
-                if (data.message === 'Email verificado com sucesso!') {
-                    Swal.fire({
-                        title: 'Sucesso!',
-                        text: data.message,
-                        icon: 'success',
-                        confirmButtonText: 'Ok'
-                    }).then(() => {
-                        window.location.href = '/login';
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Erro!',
-                        text: data.message,
-                        icon: 'error',
-                        confirmButtonText: 'Ok'
-                    });
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Erro ao verificar o e-mail:', error);
-            Swal.fire({
-                title: 'Erro!',
-                text: 'Houve um problema ao tentar verificar seu e-mail.',
-                icon: 'error',
-                confirmButtonText: 'Ok'
-            });
-        });
-}
