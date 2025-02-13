@@ -94,7 +94,7 @@ app.get('/api/verify-email', async (req, res) => {
 
     if (!token) {
         console.log('Nenhum token recebido.');
-        return res.status(400).json({ message: 'Token inválido ou ausente.' });
+        return res.status(400).json({ success: false, message: 'Token inválido ou ausente.' });
     }
 
     try {
@@ -103,7 +103,7 @@ app.get('/api/verify-email', async (req, res) => {
 
         if (result.rows.length === 0) {
             console.log('Usuário não encontrado para este token.');
-            return res.status(404).json({ message: 'Token inválido ou expirado.' });
+            return res.status(404).json({ success: false, message: 'Token inválido ou expirado.' });
         }
 
         const user = result.rows[0];
@@ -117,7 +117,7 @@ app.get('/api/verify-email', async (req, res) => {
 
         if (tokenAge > tokenExpirationTime) {
             console.log('Token expirado.');
-            return res.status(400).json({ message: 'O token expirou. Solicite um novo.' });
+            return res.status(400).json({ success: false, message: 'O token expirou. Solicite um novo.' });
         }
 
         // Atualizar o status de verificação do e-mail
@@ -126,22 +126,23 @@ app.get('/api/verify-email', async (req, res) => {
 
         if (updateResult.rowCount === 0) {
             console.log('Erro ao atualizar o status de verificação.');
-            return res.status(500).json({ message: 'Erro ao verificar o e-mail.' });
+            return res.status(500).json({ success: false, message: 'Erro ao verificar o e-mail.' });
         }
 
         console.log('Email verificado com sucesso!');
 
-        // Retornar a URL de redirecionamento
-        res.json({
+        // Passando a resposta com um redirectUrl
+        res.status(200).json({
             success: true,
             message: 'E-mail verificado com sucesso!',
             redirectUrl: 'https://criptovanguard.github.io/Cripto-Vanguard/login/login.html?verified=true'
         });
     } catch (error) {
         console.error('Erro no backend ao verificar e-mail:', error);
-        res.status(500).json({ message: 'Erro ao verificar e-mail.' });
+        res.status(500).json({ success: false, message: 'Erro ao verificar e-mail.' });
     }
 });
+
 
 
 // Função de login de usuário
