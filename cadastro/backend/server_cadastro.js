@@ -96,7 +96,7 @@ app.get('/api/verify-email', async (req, res) => {
     }
 
     try {
-        const query = 'SELECT id FROM usuarios WHERE token_verificacao = $1';
+        const query = 'SELECT id, token_verificacao, created_at FROM usuarios WHERE token_verificacao = $1';
         const result = await pool.query(query, [token]);
 
         if (result.rows.length === 0) {
@@ -104,11 +104,31 @@ app.get('/api/verify-email', async (req, res) => {
             return res.status(404).json({ message: 'Token inválido ou expirado.' });
         }
 
+        const user = result.rows[0];
+        console.log('Usuário encontrado, ID:', user.id);
+
+        // Verificar se o token expirou (aqui assumimos que o token tem validade de 1 hora)
+        const tokenExpirationTime = 60 * 60 * 1000; // 1 hora em milissegundos
+        const currentTime = new Date().getTime();
+        const tokenCreatedTime = new Date(user.created_at).getTime();
+        const tokenAge = currentTime - tokenCreatedTime;
+
+        if (tokenAge > tokenExpirationTime) {
+            console.log('Token expirado.');
+            return res.status(400).json({ message: 'O token expirou. Solicite um novo.' });
+        }
+
         // Atualizar o status de verificação do e-mail
         const updateQuery = 'UPDATE usuarios SET email_verificado = true, token_verificacao = NULL WHERE id = $1';
-        await pool.query(updateQuery, [result.rows[0].id]);
+        const updateResult = await pool.query(updateQuery, [user.id]);
+
+        if (updateResult.rowCount === 0) {
+            console.log('Erro ao atualizar o status de verificação.');
+            return res.status(500).json({ message: 'Erro ao verificar o e-mail.' });
+        }
 
         console.log('Email verificado com sucesso!');
+
         res.redirect('https://criptovanguard.github.io/Cripto-Vanguard/login/login.html?verified=true');
     } catch (error) {
         console.error('Erro no backend ao verificar e-mail:', error);
