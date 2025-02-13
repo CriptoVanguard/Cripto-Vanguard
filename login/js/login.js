@@ -1,4 +1,3 @@
-
 // Obtendo os elementos necessários
 const togglePassword = document.getElementById('togglePassword');
 const passwordField = document.getElementById('password');
@@ -10,23 +9,19 @@ togglePassword.addEventListener('click', function () {
     passwordField.type = type;
 
     // Alterando o ícone do olho baseado na visibilidade da senha
-    if (passwordField.type === 'password') {
-        togglePassword.innerHTML = '👁️';  // Ícone de olho fechado
-    } else {
-        togglePassword.innerHTML = '🙈';  // Ícone de olho aberto
-    }
+    togglePassword.innerHTML = passwordField.type === 'password' ? '👁️' : '🙈';
 });
 
 // Opção para mostrar um alerta caso o formulário de login seja enviado sem os campos preenchidos
 const loginForm = document.getElementById('loginForm');
-loginForm.addEventListener('submit', function (e) {
+loginForm.addEventListener('submit', async function (e) {
     e.preventDefault(); // Previne o envio do formulário
 
-    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value; // Mudando para email
     const password = passwordField.value;
 
     // Verifica se os campos estão preenchidos
-    if (username === '' || password === '') {
+    if (email === '' || password === '') {
         // Exibe um alerta de erro usando o SweetAlert2
         Swal.fire({
             icon: 'error',
@@ -34,15 +29,59 @@ loginForm.addEventListener('submit', function (e) {
             text: 'Por favor, preencha todos os campos!',
         });
     } else {
-        // Caso os campos estejam preenchidos, você pode enviar o formulário ou realizar outra ação
-        // Exemplo: redirecionar para a página de dashboard
-        Swal.fire({
-            icon: 'success',
-            title: 'Bem-vindo!',
-            text: 'Você foi logado com sucesso.',
-        }).then(() => {
-            // Aqui você pode redirecionar o usuário após a autenticação
-            window.location.href = "dashboard.html"; // Substitua com a URL de destino
+        // Caso os campos estejam preenchidos, enviar os dados para autenticação no backend
+        const response = await fetch('/api/login', { // Enviar login para backend (você deve implementar a rota no backend)
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }) // Enviar email e senha para o backend
         });
+
+        const data = await response.json();
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Bem-vindo!',
+                text: 'Você foi logado com sucesso.',
+            }).then(() => {
+                window.location.href = "dashboard.html"; // Substitua com a URL de destino
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro!',
+                text: data.message || 'Falha no login, tente novamente.',
+            });
+        }
     }
 });
+
+// Função para verificar o token de email na URL
+window.onload = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (token) {
+        try {
+            const response = await fetch(`/api/verify-email?token=${token}`, {
+                method: 'GET',
+            });
+
+            const data = await response.json();
+            showNotification(data.message); // Exibe a mensagem recebida do servidor
+
+            if (data.success) {
+                // Redirecionar após a verificação de e-mail
+                setTimeout(() => {
+                    window.location.href = 'login.html'; // Redireciona para a página de login
+                }, 2000); // Espera 2 segundos antes de redirecionar
+            }
+        } catch (error) {
+            showNotification('Erro ao verificar o e-mail. Tente novamente.');
+        }
+    }
+};
+
+function showNotification(message) {
+    // Exemplo de exibição simples de uma notificação no navegador
+    alert(message); // Pode ser substituído por uma notificação personalizada ou pop-up
+}
