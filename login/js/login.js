@@ -99,3 +99,22 @@ function showNotification(message) {
         text: message,
     });
 }
+if (data.success) {
+    Swal.fire({
+        icon: 'success',
+        title: 'Bem-vindo!',
+        text: 'Você foi logado com sucesso.',
+    }).then(() => {
+        window.location.href = "dashboard.html"; // Substitua com a URL de destino
+    });
+} else {
+    Swal.fire({
+        icon: 'error',
+        title: 'Erro!',
+        text: data.message || 'Falha no login, tente novamente.',
+    }).then(() => {
+        if (data.redirectUrl) {
+            window.location.href = data.redirectUrl;
+        }
+    });
+}

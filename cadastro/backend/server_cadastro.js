@@ -84,6 +84,8 @@ app.post('/cadastro', async (req, res) => {
     }
 });
 
+
+
 // Rota para verificação de e-mail
 app.get('/api/verify-email', async (req, res) => {
     const { token } = req.query;
@@ -92,7 +94,7 @@ app.get('/api/verify-email', async (req, res) => {
 
     if (!token) {
         console.log('Nenhum token recebido.');
-        return res.status(400).json({ message: 'Token inválido ou ausente.' });
+        return res.status(400).json({ success: false, message: 'Token inválido ou ausente.' });
     }
 
     try {
@@ -101,7 +103,7 @@ app.get('/api/verify-email', async (req, res) => {
 
         if (result.rows.length === 0) {
             console.log('Usuário não encontrado para este token.');
-            return res.status(404).json({ message: 'Token inválido ou expirado.' });
+            return res.status(404).json({ success: false, message: 'Token inválido ou expirado.' });
         }
 
         const user = result.rows[0];
@@ -115,7 +117,7 @@ app.get('/api/verify-email', async (req, res) => {
 
         if (tokenAge > tokenExpirationTime) {
             console.log('Token expirado.');
-            return res.status(400).json({ message: 'O token expirou. Solicite um novo.' });
+            return res.status(400).json({ success: false, message: 'O token expirou. Solicite um novo.' });
         }
 
         // Atualizar o status de verificação do e-mail
@@ -124,18 +126,26 @@ app.get('/api/verify-email', async (req, res) => {
 
         if (updateResult.rowCount === 0) {
             console.log('Erro ao atualizar o status de verificação.');
-            return res.status(500).json({ message: 'Erro ao verificar o e-mail.' });
+            return res.status(500).json({ success: false, message: 'Erro ao verificar o e-mail.' });
         }
 
         console.log('Email verificado com sucesso!');
 
-        res.redirect('https://criptovanguard.github.io/Cripto-Vanguard/login/login.html?verified=true');
+        // Passando a resposta com um redirectUrl
+        res.status(200).json({
+            success: true,
+            message: 'E-mail verificado com sucesso!',
+            redirectUrl: 'https://criptovanguard.github.io/Cripto-Vanguard/login/login.html?verified=true'
+        });
     } catch (error) {
         console.error('Erro no backend ao verificar e-mail:', error);
-        res.status(500).json({ message: 'Erro ao verificar e-mail.' });
+        res.status(500).json({ success: false, message: 'Erro ao verificar e-mail.' });
     }
 });
 
+
+
+// Função de login de usuário
 // Função de login de usuário
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
@@ -160,7 +170,11 @@ app.post('/api/login', async (req, res) => {
         }
 
         if (!user.email_verificado) {
-            return res.status(400).json({ success: false, message: 'Por favor, verifique seu e-mail antes de fazer login.' });
+            return res.status(400).json({
+                success: false,
+                message: 'Por favor, verifique seu e-mail antes de fazer login.',
+                redirectUrl: 'https://criptovanguard.github.io/Cripto-Vanguard/login/login.html?verified=false'
+            });
         }
 
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -175,6 +189,7 @@ app.post('/api/login', async (req, res) => {
         res.status(500).json({ success: false, message: 'Erro ao autenticar usuário.' });
     }
 });
+
 
 app.listen(port, () => {
     console.log(`🚀 Servidor rodando na porta ${port}`);
