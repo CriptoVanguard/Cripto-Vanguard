@@ -67,21 +67,33 @@ window.onload = async () => {
             });
 
             const data = await response.json();
-            showNotification(data.message); // Exibe a mensagem recebida do servidor
-
-            if (data.success) {
-                // Redirecionar após a verificação de e-mail
-                setTimeout(() => {
-                    window.location.href = 'login.html'; // Redireciona para a página de login
-                }, 2000); // Espera 2 segundos antes de redirecionar
-            }
+            Swal.fire({
+                icon: data.success ? 'success' : 'error',
+                title: data.success ? 'Sucesso!' : 'Erro!',
+                text: data.message,
+            }).then(() => {
+                if (data.success) {
+                    setTimeout(() => {
+                        window.location.href = data.redirectUrl; // Usar o redirectUrl retornado
+                    }, 2000);
+                }
+            });
         } catch (error) {
-            showNotification('Erro ao verificar o e-mail. Tente novamente.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro!',
+                text: 'Erro ao verificar o e-mail. Tente novamente.',
+            });
         }
     }
 };
 
+
 function showNotification(message) {
-    // Exemplo de exibição simples de uma notificação no navegador
-    alert(message); // Pode ser substituído por uma notificação personalizada ou pop-up
+    // Usando SweetAlert2 para exibir notificações
+    Swal.fire({
+        icon: 'info',
+        title: 'Notificação',
+        text: message,
+    });
 }
