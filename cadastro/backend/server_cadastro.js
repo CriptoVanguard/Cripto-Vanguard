@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const { sendVerificationEmail } = require('./email/sendEmail');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -77,8 +78,6 @@ app.post('/cadastro', async (req, res) => {
     }
 });
 
-
-
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -96,25 +95,22 @@ app.post('/api/login', async (req, res) => {
 
         const user = result.rows[0];
 
-        // Verificar se a senha fornecida corresponde à senha criptografada no banco
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
             return res.status(400).json({ success: false, message: 'Senha incorreta.' });
         }
 
-        // Verificar se o e-mail foi verificado
         if (!user.email_verificado) {
             return res.status(400).json({ success: false, message: 'Por favor, verifique seu e-mail antes de fazer login.' });
         }
 
-        // Se tudo estiver correto, autenticar o usuário (gerar um token JWT ou sessão)
-        const token = generateAuthToken(user.id); // Implementar a função de geração do token
+        const token = generateAuthToken(user.id);
 
         res.status(200).json({
             success: true,
             message: 'Login bem-sucedido.',
-            token,  // Retorna o token gerado
+            token,
         });
     } catch (err) {
         console.error('Erro ao autenticar usuário:', err.message);
@@ -122,19 +118,12 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Função para gerar o token de autenticação (usando JWT)
 function generateAuthToken(userId) {
-    const jwt = require('jsonwebtoken');
     const token = jwt.sign({ userId }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
     return token;
 }
-
-
-
-
-
-app.get('/api/verify-email', async (req, res) => {
-    const { token } = req.query;
+app.get('/verify-email', async (req, res) => {
+    const { token } = req.query;  // Recebe o token como parâmetro da URL
 
     if (!token) {
         return res.status(400).json({ success: false, message: 'Token inválido.' });
@@ -145,26 +134,26 @@ app.get('/api/verify-email', async (req, res) => {
         const result = await pool.query(query, [token]);
 
         if (result.rows.length > 0) {
-            console.log(`Token válido encontrado. Atualizando status de verificação para o usuário ${result.rows[0].id}.`);
-            const updateQuery = 'UPDATE usuarios SET email_verificado = $1, token_verificacao = NULL WHERE id = $2';
-            await pool.query(updateQuery, [true, result.rows[0].id]);
+            // Token válido: atualize o status de verificação
+            const userId = result.rows[0].id;
+            const updateQuery = 'UPDATE usuarios SET email_verificado = TRUE, token_verificacao = NULL WHERE id = $1';
+            await pool.query(updateQuery, [userId]);
 
-            // Após a verificação, redireciona para a página de login
-            return res.json({
+            // Redireciona para a página de login
+            res.json({
                 success: true,
-                message: 'Email verificado com sucesso!',
-                redirectUrl: 'https://criptovanguard.github.io/Cripto-Vanguard/login/login.html'  // URL de redirecionamento para o login
+                message: 'E-mail verificado com sucesso!',
+                redirectUrl: 'https://criptovanguard.github.io/Cripto-Vanguard/login/login.html'  // URL de redirecionamento para login
             });
         } else {
-            console.log(`Token não encontrado ou inválido: ${token}`);
-            return res.status(404).json({ success: false, message: 'Token não encontrado ou inválido.' });
+            // Token não encontrado ou inválido
+            res.status(404).json({ success: false, message: 'Token inválido ou expirado.' });
         }
     } catch (error) {
         console.error('Erro ao verificar token:', error);
-        return res.status(500).json({ success: false, message: 'Erro ao verificar o token.' });
+        res.status(500).json({ success: false, message: 'Erro ao verificar token.' });
     }
 });
-
 
 app.listen(port, () => {
     console.log(`🚀 Servidor rodando na porta ${port}`);
