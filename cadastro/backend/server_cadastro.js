@@ -88,26 +88,30 @@ app.post('/cadastro', async (req, res) => {
 app.get('/api/verify-email', async (req, res) => {
     const { token } = req.query;
 
+    console.log('Token recebido:', token);
+
     if (!token) {
+        console.log('Nenhum token recebido.');
         return res.status(400).json({ message: 'Token inválido ou ausente.' });
     }
 
     try {
-        const user = await User.findOne({ where: { verificationToken: token } });
+        const query = 'SELECT id FROM usuarios WHERE token_verificacao = $1';
+        const result = await pool.query(query, [token]);
 
-        if (!user) {
+        if (result.rows.length === 0) {
+            console.log('Usuário não encontrado para este token.');
             return res.status(404).json({ message: 'Token inválido ou expirado.' });
         }
 
-        user.emailVerified = true;
-        user.verificationToken = null;
-        await user.save();
+        // Atualizar o status de verificação do e-mail
+        const updateQuery = 'UPDATE usuarios SET email_verificado = true, token_verificacao = NULL WHERE id = $1';
+        await pool.query(updateQuery, [result.rows[0].id]);
 
-        // Redireciona automaticamente para login.html
+        console.log('Email verificado com sucesso!');
         res.redirect('https://criptovanguard.github.io/Cripto-Vanguard/login/login.html?verified=true');
-
     } catch (error) {
-        console.error(error);
+        console.error('Erro no backend ao verificar e-mail:', error);
         res.status(500).json({ message: 'Erro ao verificar e-mail.' });
     }
 });
@@ -129,7 +133,6 @@ app.post('/api/login', async (req, res) => {
         }
 
         const user = result.rows[0];
-
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
@@ -140,7 +143,7 @@ app.post('/api/login', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Por favor, verifique seu e-mail antes de fazer login.' });
         }
 
-        const token = generateAuthToken(user.id);
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.status(200).json({
             success: true,
@@ -152,7 +155,6 @@ app.post('/api/login', async (req, res) => {
         res.status(500).json({ success: false, message: 'Erro ao autenticar usuário.' });
     }
 });
-
 
 app.listen(port, () => {
     console.log(`🚀 Servidor rodando na porta ${port}`);
