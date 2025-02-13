@@ -85,33 +85,30 @@ app.post('/cadastro', async (req, res) => {
 });
 
 // Rota para verificação de e-mail
-app.get('/verify-email', async (req, res) => {
+app.get('/api/verify-email', async (req, res) => {
     const { token } = req.query;
 
     if (!token) {
-        return res.status(400).json({ success: false, message: 'Token inválido.' });
+        return res.status(400).json({ message: 'Token inválido ou ausente.' });
     }
 
     try {
-        const query = 'SELECT id FROM usuarios WHERE token_verificacao = $1';
-        const result = await pool.query(query, [token]);
+        const user = await User.findOne({ where: { verificationToken: token } });
 
-        if (result.rows.length > 0) {
-            const userId = result.rows[0].id;
-            const updateQuery = 'UPDATE usuarios SET email_verificado = TRUE, token_verificacao = NULL WHERE id = $1';
-            await pool.query(updateQuery, [userId]);
-
-            res.json({
-                success: true,
-                message: 'E-mail verificado com sucesso!',
-                redirectUrl: 'https://criptovanguard.github.io/Cripto-Vanguard/login/login.html'
-            });
-        } else {
-            res.status(404).json({ success: false, message: 'Token inválido ou expirado.' });
+        if (!user) {
+            return res.status(404).json({ message: 'Token inválido ou expirado.' });
         }
+
+        user.emailVerified = true;
+        user.verificationToken = null;
+        await user.save();
+
+        // Redireciona automaticamente para login.html
+        res.redirect('https://criptovanguard.github.io/Cripto-Vanguard/login/login.html?verified=true');
+
     } catch (error) {
-        console.error('Erro ao verificar token:', error);
-        res.status(500).json({ success: false, message: 'Erro ao verificar token.' });
+        console.error(error);
+        res.status(500).json({ message: 'Erro ao verificar e-mail.' });
     }
 });
 
