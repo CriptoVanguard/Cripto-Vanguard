@@ -36,6 +36,12 @@ pool.connect()
         process.exit(1);
     });
 
+// Função para gerar o token de verificação
+function generateVerificationToken() {
+    return crypto.randomBytes(32).toString('hex');
+}
+
+// Rota de cadastro de usuário
 app.post('/cadastro', async (req, res) => {
     const { username, email, senha } = req.body;
 
@@ -52,7 +58,7 @@ app.post('/cadastro', async (req, res) => {
         }
 
         const hashedSenha = await bcrypt.hash(senha, 10);
-        const verificationToken = crypto.randomBytes(32).toString('hex');
+        const verificationToken = generateVerificationToken();
 
         const novoUsuario = await pool.query(
             "INSERT INTO usuarios (username, email, password, token_verificacao) VALUES ($1, $2, $3, $4) RETURNING id",
@@ -78,6 +84,7 @@ app.post('/cadastro', async (req, res) => {
     }
 });
 
+// Função de login de usuário
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -118,12 +125,15 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// Função para gerar o token de autenticação
 function generateAuthToken(userId) {
     const token = jwt.sign({ userId }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
     return token;
 }
+
+// Rota para verificação de e-mail
 app.get('/verify-email', async (req, res) => {
-    const { token } = req.query;  // Recebe o token como parâmetro da URL
+    const { token } = req.query;
 
     if (!token) {
         return res.status(400).json({ success: false, message: 'Token inválido.' });
@@ -134,19 +144,16 @@ app.get('/verify-email', async (req, res) => {
         const result = await pool.query(query, [token]);
 
         if (result.rows.length > 0) {
-            // Token válido: atualize o status de verificação
             const userId = result.rows[0].id;
             const updateQuery = 'UPDATE usuarios SET email_verificado = TRUE, token_verificacao = NULL WHERE id = $1';
             await pool.query(updateQuery, [userId]);
 
-            // Redireciona para a página de login
             res.json({
                 success: true,
                 message: 'E-mail verificado com sucesso!',
-                redirectUrl: 'https://criptovanguard.github.io/Cripto-Vanguard/login/login.html'  // URL de redirecionamento para login
+                redirectUrl: 'https://criptovanguard.github.io/Cripto-Vanguard/login/login.html'
             });
         } else {
-            // Token não encontrado ou inválido
             res.status(404).json({ success: false, message: 'Token inválido ou expirado.' });
         }
     } catch (error) {
