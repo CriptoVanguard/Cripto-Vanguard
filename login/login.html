@@ -63,57 +63,7 @@
 
     <!-- JavaScript -->
     <script src="js/login.js"></script>
-    <script>
-        // Função para verificar o e-mail após clicar no link
-        async function verifyEmail() {
-            // Pegue o token da URL (query parameter)
-            const urlParams = new URLSearchParams(window.location.search);
-            const token = urlParams.get('token');
     
-            if (!token) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Token ausente',
-                    text: 'O token para verificação não foi encontrado.',
-                });
-                return;
-            }
-    
-            try {
-                // Enviar o token para o backend para verificação
-                const response = await fetch(`/api/verify-email?token=${token}`);
-                const data = await response.json();
-    
-                // Verifica o sucesso ou erro da resposta
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'E-mail verificado com sucesso!',
-                        text: data.message,
-                    }).then(() => {
-                        // Após fechar o alerta, redireciona para a página de login
-                        window.location.href = data.redirectUrl;
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Erro',
-                        text: data.message,
-                    });
-                }
-            } catch (error) {
-                // Se ocorrer algum erro na requisição
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro no servidor',
-                    text: 'Não foi possível verificar o e-mail. Tente novamente mais tarde.',
-                });
-            }
-        }
-    
-        // Chama a função de verificação de e-mail ao carregar a página
-        window.onload = verifyEmail;
-    </script>
 </body>
 
 </html>
