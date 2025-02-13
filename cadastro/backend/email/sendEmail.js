@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 
 // Função para enviar o e-mail de verificação
 async function sendVerificationEmail(email, token) {
-    const verificationLink = `https://criptovanguard.github.io/Cripto-Vanguard/login/verify.html?token=${token}`;
+    const verificationLink = `https://criptovanguard.github.io/Cripto-Vanguard/login/login.html?token=${token}`;  // Atualizado para login.html
 
     const mailOptions = {
         from: process.env.EMAIL_USER,
