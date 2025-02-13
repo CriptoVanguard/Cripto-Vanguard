@@ -67,6 +67,8 @@ window.onload = async () => {
             });
 
             const data = await response.json();
+
+            // Exibindo o SweetAlert com base na resposta da API
             Swal.fire({
                 icon: data.success ? 'success' : 'error',
                 title: data.success ? 'Sucesso!' : 'Erro!',
@@ -74,7 +76,7 @@ window.onload = async () => {
             }).then(() => {
                 if (data.success) {
                     setTimeout(() => {
-                        window.location.href = data.redirectUrl; // Usar o redirectUrl retornado
+                        window.location.href = data.redirectUrl || 'login.html'; // Usar o redirectUrl retornado ou página padrão
                     }, 2000);
                 }
             });
@@ -88,7 +90,7 @@ window.onload = async () => {
     }
 };
 
-
+// Função para mostrar notificações genéricas
 function showNotification(message) {
     // Usando SweetAlert2 para exibir notificações
     Swal.fire({
