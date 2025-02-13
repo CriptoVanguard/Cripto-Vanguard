@@ -3,15 +3,12 @@ require('dotenv').config();  // Carrega as variáveis de ambiente do arquivo .en
 
 // Criação do transportador de e-mail usando as credenciais do .env
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com', // Host do SMTP do Gmail
-    port: 465, // Porta para conexões seguras (SSL)
-    secure: true, // Usar SSL
+    service: 'gmail', // Pode usar outro serviço de e-mail se necessário
     auth: {
-        user: process.env.EMAIL_USER, // E-mail
-        pass: process.env.EMAIL_PASS, // Senha do aplicativo
+        user: process.env.EMAIL_USER, // E-mail configurado no .env
+        pass: process.env.EMAIL_PASS, // Senha do App configurada no .env
     },
 });
-
 
 // Função para enviar o e-mail de verificação
 async function sendVerificationEmail(email, token) {
@@ -35,8 +32,8 @@ async function sendVerificationEmail(email, token) {
         console.log('✅ E-mail de verificação enviado!');
     } catch (error) {
         console.error('❌ Erro ao enviar o e-mail:', error);
-        throw new Error('Erro ao enviar o e-mail de verificação');
     }
 }
 
-module.exports = { sendVerificationEmail };
+// Teste de envio de e-mail
+sendVerificationEmail('criptovanguard1@gmail.com', 'exemplo-token-de-teste');
