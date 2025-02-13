@@ -99,35 +99,3 @@ function showNotification(message) {
         text: message,
     });
 }
-if (data.success) {
-    Swal.fire({
-        icon: 'success',
-        title: 'Bem-vindo!',
-        text: 'Você foi logado com sucesso.',
-    }).then(() => {
-        window.location.href = "dashboard.html"; // Substitua com a URL de destino
-    });
-} else {
-    Swal.fire({
-        icon: 'error',
-        title: 'Erro!',
-        text: data.message || 'Falha no login, tente novamente.',
-    }).then(() => {
-        if (data.redirectUrl) {
-            window.location.href = data.redirectUrl;
-        }
-    });
-}
-fetch('/api/verify-email?token=' + token)
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Redireciona para a URL recebida na resposta
-            window.location.href = data.redirectUrl;
-        } else {
-            alert(data.message); // Exibe a mensagem de erro, se houver
-        }
-    })
-    .catch(error => {
-        console.error('Erro ao verificar o e-mail:', error);
-    });
