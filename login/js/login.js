@@ -50,19 +50,16 @@ loginForm.addEventListener('submit', async function (e) {
     } else {
         console.log("Form validation passed, sending request to backend.");
 
-        // URL da API de login
-        const backendUrl = 'https://criptovanguard.github.io/api/login'; // Ajuste para o seu backend
-
         // Caso os campos estejam preenchidos, enviar os dados para autenticação no backend
         try {
-            const response = await fetch(backendUrl, { // Usando a URL definida para o backend
+            const response = await fetch('https://cripto-vanguard.onrender.com/api/login', { // Certifique-se de usar a URL completa do seu backend
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }) // Enviar email e senha para o backend
             });
 
-            console.log("Request sent to", backendUrl, ", waiting for response.");
-
+            console.log("Request sent to /api/login, waiting for response.");
+            
             // Se o código de status da resposta for 200
             if (!response.ok) {
                 console.error("Login request failed with status:", response.status);
