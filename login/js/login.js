@@ -16,6 +16,7 @@ togglePassword.addEventListener('click', function () {
 
 // Função para exibir mensagens de sucesso ou erro usando SweetAlert
 function showAlert(icon, title, text, redirectUrl = null) {
+    console.log(`Alert triggered - ${title}: ${text}`);
     Swal.fire({
         icon: icon,
         title: title,
@@ -35,16 +36,19 @@ loginForm.addEventListener('submit', async function (e) {
 
     const email = document.getElementById('email').value; // Mudando para email
     const password = passwordField.value;
+    console.log(`User input - Email: ${email}, Password: ${password ? '****' : 'empty'}`);
 
     // Verifica se os campos estão preenchidos
     if (email === '' || password === '') {
         // Exibe um alerta de erro usando o SweetAlert2
+        console.log("Form validation failed - missing email or password.");
         Swal.fire({
             icon: 'error',
             title: 'Erro!',
             text: 'Por favor, preencha todos os campos!',
         });
     } else {
+        console.log("Form validation passed, sending request to backend.");
 
         // Caso os campos estejam preenchidos, enviar os dados para autenticação no backend
         try {
@@ -54,6 +58,7 @@ loginForm.addEventListener('submit', async function (e) {
                 body: JSON.stringify({ email, password }) // Enviar email e senha para o backend
             });
 
+            console.log("Request sent to /api/login, waiting for response.");
             
             // Se o código de status da resposta for 200
             if (!response.ok) {
@@ -63,6 +68,7 @@ loginForm.addEventListener('submit', async function (e) {
             }
 
             const data = await response.json();
+            console.log("Response from backend received:", data);
 
             if (data.success) {
                 // Substituindo para a URL correta
@@ -71,6 +77,7 @@ loginForm.addEventListener('submit', async function (e) {
                 showAlert('error', 'Erro!', data.message || 'Falha no login, tente novamente.');
             }
         } catch (error) {
+            console.error("Error during login request:", error);
             showAlert('error', 'Erro!', 'Houve um erro ao tentar fazer login.');
         }
     }
@@ -88,6 +95,7 @@ window.onload = async () => {
     // Verificando o token de verificação
     if (token) {
         try {
+            console.log("Verifying email with token:", token);
             const response = await fetch(`/api/verify-email?token=${token}`, {
                 method: 'GET',
             });
@@ -100,6 +108,7 @@ window.onload = async () => {
                 showAlert('error', 'Erro!', data.message);
             }
         } catch (error) {
+            console.log("Error verifying email:", error);
             showAlert('error', 'Erro!', 'Erro ao verificar o e-mail. Tente novamente.');
         }
     }
