@@ -28,8 +28,6 @@ function showAlert(icon, title, text, redirectUrl = null) {
     });
 }
 
-let attemptsLeft = 5;  // Número inicial de tentativas
-
 // Opção para mostrar um alerta caso o formulário de login seja enviado sem os campos preenchidos
 const loginForm = document.getElementById('loginForm');
 loginForm.addEventListener('submit', async function (e) {
@@ -52,14 +50,9 @@ loginForm.addEventListener('submit', async function (e) {
     } else {
         console.log("Form validation passed, sending request to backend.");
 
-        // Verifica se o número de tentativas restantes é maior que 0
-        if (attemptsLeft <= 0) {
-            showAlert('error', 'Erro!', 'Você excedeu o número de tentativas. Tente novamente mais tarde.');
-            return;
-        }
-
+        // Caso os campos estejam preenchidos, enviar os dados para autenticação no backend
         try {
-            const response = await fetch('https://cripto-vanguard.onrender.com/api/login', { // Certifique-se de usar a URL completa do seu backend
+            const response = await fetch('/api/login', { // Enviar login para backend (você deve implementar a rota no backend)
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }) // Enviar email e senha para o backend
@@ -70,7 +63,6 @@ loginForm.addEventListener('submit', async function (e) {
             // Se o código de status da resposta for 200
             if (!response.ok) {
                 console.error("Login request failed with status:", response.status);
-                attemptsLeft--;  // Reduz o número de tentativas restantes
                 showAlert('error', 'Erro!', 'Falha ao autenticar. Tente novamente.');
                 return;
             }
@@ -81,17 +73,7 @@ loginForm.addEventListener('submit', async function (e) {
             if (data.success) {
                 showAlert('success', 'Bem-vindo!', data.message, 'dashboard.html'); // Substitua com a URL de destino
             } else {
-                attemptsLeft--;
                 showAlert('error', 'Erro!', data.message || 'Falha no login, tente novamente.');
-            }
-
-            // Exibir tentativas restantes
-            if (attemptsLeft > 0) {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Tentativas Restantes',
-                    text: `Você tem ${attemptsLeft} tentativas restantes.`,
-                });
             }
         } catch (error) {
             console.error("Error during login request:", error);

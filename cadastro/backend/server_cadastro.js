@@ -12,39 +12,10 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const corsOptions = {
-    origin: 'https://criptovanguard.github.io', // Certifique-se de que essa URL está correta
+    origin: 'https://criptovanguard.github.io',
     methods: 'GET,POST',
-    allowedHeaders: 'Content-Type,Authorization', // Adicione Authorization caso você precise lidar com tokens JWT
-    credentials: true, // Caso esteja usando cookies ou credenciais no frontend
+    allowedHeaders: 'Content-Type',
 };
-
-app.use(cors(corsOptions));
-
-const rateLimit = require('express-rate-limit');
-
-// Defina a regra para limitar tentativas de login
-const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 5, // número máximo de tentativas de login
-    message: 'Você fez muitas tentativas. Tente novamente mais tarde.',
-});
-
-// Aplique o rate limiter na rota de login
-app.post('/api/login', loginLimiter, async (req, res) => {
-    // sua lógica de login aqui
-});
-let loginAttempts = 0;  // Exemplo de variável de controle
-
-// Supondo que você tenha um limite de 5 tentativas
-const maxAttempts = 5;
-
-// Lógica de verificação de login:
-if (loginAttempts >= maxAttempts) {
-    res.status(403).json({ success: false, message: 'Número máximo de tentativas alcançado. Tente novamente mais tarde.' });
-} else {
-    // Lógica de verificação de senha...
-}
-app.set('trust proxy', 1);  // Habilita o uso do cabeçalho X-Forwarded-For
 
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
