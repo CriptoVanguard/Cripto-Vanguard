@@ -158,7 +158,7 @@ if (form) {
             // Exibe a mensagem de sucesso de cadastro
             Swal.fire({
                 title: 'Sucesso!',
-                text: 'Cadastro realizado com sucesso. Verifique seu e-mail para confirmar sua conta. Tão logo que o e-mail for enviado clica em verificar, e não fizer isso nunca vain conseguir acessar sua conta e vai ter de criar uma nova com novas credencias',
+                text: 'Cadastro realizado com sucesso. Verifique seu e-mail para confirmar sua conta. Tão logo que o e-mail for enviado clica em verificar, e se não fizer isso nunca vai conseguir acessar sua conta e vai ter de criar uma nova com novas credencias',
                 icon: 'success',
                 confirmButtonText: 'Ok'
             }).then(() => {
