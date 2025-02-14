@@ -122,3 +122,39 @@ window.onload = async () => {
         showAlert('error', 'Erro!', 'Houve um erro ao verificar o seu e-mail. Tente novamente.');
     }
 };
+function handleLoginResponse(response) {
+    const notification = document.getElementById("notification");
+
+    if (response.success) {
+        notification.textContent = response.message; // Sucesso
+        notification.classList.add("success");
+        notification.classList.remove("error");
+    } else {
+        notification.textContent = response.message; // Erro
+        notification.classList.add("error");
+        notification.classList.remove("success");
+    }
+
+    // Exibe a notificação
+    notification.style.display = "block";
+
+    // Esconde após 5 segundos
+    setTimeout(() => {
+        notification.style.display = "none";
+    }, 5000);
+}
+
+// Exemplo de chamada à API
+function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+    })
+    .then(response => response.json())
+    .then(data => handleLoginResponse(data))
+    .catch(error => console.error('Erro:', error));
+}

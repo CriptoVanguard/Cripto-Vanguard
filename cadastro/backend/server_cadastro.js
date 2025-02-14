@@ -4,9 +4,9 @@ const { Pool } = require('pg');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { sendVerificationEmail } = require('./email/sendEmail');
-const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -88,10 +88,7 @@ app.post('/cadastro', async (req, res) => {
 app.get('/api/verify-email', async (req, res) => {
     const { token } = req.query;
 
-    console.log('Token recebido:', token);
-
     if (!token) {
-        console.log('Nenhum token recebido.');
         return res.status(400).json({ message: 'Token inválido ou ausente.' });
     }
 
@@ -100,34 +97,22 @@ app.get('/api/verify-email', async (req, res) => {
         const result = await pool.query(query, [token]);
 
         if (result.rows.length === 0) {
-            console.log('Usuário não encontrado para este token.');
             return res.status(404).json({ message: 'Token inválido ou expirado.' });
         }
 
         const user = result.rows[0];
-        console.log('Usuário encontrado, ID:', user.id);
 
-        // Verificar se o token expirou (aqui assumimos que o token tem validade de 1 hora)
         const tokenExpirationTime = 60 * 60 * 1000; // 1 hora em milissegundos
         const currentTime = new Date().getTime();
         const tokenCreatedTime = new Date(user.created_at).getTime();
         const tokenAge = currentTime - tokenCreatedTime;
 
         if (tokenAge > tokenExpirationTime) {
-            console.log('Token expirado.');
             return res.status(400).json({ message: 'O token expirou. Solicite um novo.' });
         }
 
-        // Atualizar o status de verificação do e-mail
         const updateQuery = 'UPDATE usuarios SET email_verificado = true, token_verificacao = NULL WHERE id = $1';
-        const updateResult = await pool.query(updateQuery, [user.id]);
-
-        if (updateResult.rowCount === 0) {
-            console.log('Erro ao atualizar o status de verificação.');
-            return res.status(500).json({ message: 'Erro ao verificar o e-mail.' });
-        }
-
-        console.log('Email verificado com sucesso!');
+        await pool.query(updateQuery, [user.id]);
 
         res.redirect('https://criptovanguard.github.io/Cripto-Vanguard/login/login.html?verified=true');
     } catch (error) {
@@ -136,18 +121,31 @@ app.get('/api/verify-email', async (req, res) => {
     }
 });
 
-
-
-
-// Função de login de usuário
+// Função de login de usuário com controle de tentativas
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
+    const ip = req.ip;
 
     if (!email || !password) {
         return res.status(400).json({ success: false, message: 'E-mail e senha são obrigatórios.' });
     }
 
     try {
+        const checkAttemptsQuery = 'SELECT attempts, last_attempt FROM login_attempts WHERE ip = $1';
+        const attemptsResult = await pool.query(checkAttemptsQuery, [ip]);
+        const now = new Date();
+
+        if (attemptsResult.rows.length > 0) {
+            const { attempts, last_attempt } = attemptsResult.rows[0];
+            const lastAttemptDate = new Date(last_attempt);
+
+            if (now.toDateString() !== lastAttemptDate.toDateString()) {
+                await pool.query('UPDATE login_attempts SET attempts = 0 WHERE ip = $1', [ip]);
+            } else if (attempts >= 5) {
+                return res.status(403).json({ success: false, message: 'Muitas tentativas falhas. Tente novamente amanhã.' });
+            }
+        }
+
         const query = 'SELECT id, email, password, email_verificado FROM usuarios WHERE email = $1';
         const result = await pool.query(query, [email]);
 
@@ -159,20 +157,25 @@ app.post('/api/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            return res.status(400).json({ success: false, message: 'Senha incorreta.' });
+            const newAttempts = (attemptsResult.rows[0]?.attempts || 0) + 1;
+            await pool.query(
+                'INSERT INTO login_attempts (ip, attempts, last_attempt) VALUES ($1, $2, $3) ON CONFLICT (ip) DO UPDATE SET attempts = $2, last_attempt = $3',
+                [ip, newAttempts, now]
+            );
+            return res.status(400).json({
+                success: false,
+                message: `Senha incorreta. Tentativas restantes: ${5 - newAttempts}`,
+            });
         }
 
         if (!user.email_verificado) {
             return res.status(400).json({ success: false, message: 'Por favor, verifique seu e-mail antes de fazer login.' });
         }
 
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        await pool.query('DELETE FROM login_attempts WHERE ip = $1', [ip]);
 
-        res.status(200).json({
-            success: true,
-            message: 'Login bem-sucedido.',
-            token,
-        });
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.status(200).json({ success: true, message: 'Login bem-sucedido.', token });
     } catch (err) {
         console.error('Erro ao autenticar usuário:', err.message);
         res.status(500).json({ success: false, message: 'Erro ao autenticar usuário.' });
