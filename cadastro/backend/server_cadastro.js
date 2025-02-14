@@ -40,6 +40,7 @@ if (loginAttempts >= maxAttempts) {
 } else {
     // Lógica de verificação de senha...
 }
+app.set('trust proxy', 1);  // Habilita o uso do cabeçalho X-Forwarded-For
 
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
