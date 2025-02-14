@@ -12,10 +12,14 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const corsOptions = {
-    origin: 'https://criptovanguard.github.io',
+    origin: 'https://criptovanguard.github.io', // Certifique-se de que essa URL está correta
     methods: 'GET,POST',
-    allowedHeaders: 'Content-Type',
+    allowedHeaders: 'Content-Type,Authorization', // Adicione Authorization caso você precise lidar com tokens JWT
+    credentials: true, // Caso esteja usando cookies ou credenciais no frontend
 };
+
+app.use(cors(corsOptions));
+
 const rateLimit = require('express-rate-limit');
 
 // Defina a regra para limitar tentativas de login
