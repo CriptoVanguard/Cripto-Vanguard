@@ -29,6 +29,17 @@ const loginLimiter = rateLimit({
 app.post('/api/login', loginLimiter, async (req, res) => {
     // sua lógica de login aqui
 });
+let loginAttempts = 0;  // Exemplo de variável de controle
+
+// Supondo que você tenha um limite de 5 tentativas
+const maxAttempts = 5;
+
+// Lógica de verificação de login:
+if (loginAttempts >= maxAttempts) {
+    res.status(403).json({ success: false, message: 'Número máximo de tentativas alcançado. Tente novamente mais tarde.' });
+} else {
+    // Lógica de verificação de senha...
+}
 
 app.use(bodyParser.json());
 app.use(cors(corsOptions));

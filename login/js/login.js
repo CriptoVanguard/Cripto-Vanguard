@@ -158,3 +158,58 @@ function login() {
     .then(data => handleLoginResponse(data))
     .catch(error => console.error('Erro:', error));
 }
+let attemptsLeft = 5;  // Número inicial de tentativas
+
+loginForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value;
+    const password = passwordField.value;
+
+    if (email === '' || password === '') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro!',
+            text: 'Por favor, preencha todos os campos!',
+        });
+    } else {
+        if (attemptsLeft <= 0) {
+            showAlert('error', 'Erro!', 'Você excedeu o número de tentativas. Tente novamente mais tarde.');
+            return;
+        }
+
+        try {
+            const response = await fetch('https://cripto-vanguard.onrender.com/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (!response.ok) {
+                attemptsLeft--;  // Reduz o número de tentativas restantes
+                console.log(`Tentativas restantes: ${attemptsLeft}`);
+                showAlert('error', 'Erro!', 'Falha ao autenticar. Tente novamente.');
+                return;
+            }
+
+            const data = await response.json();
+            if (data.success) {
+                showAlert('success', 'Bem-vindo!', data.message, 'dashboard.html');
+            } else {
+                attemptsLeft--;
+                showAlert('error', 'Erro!', data.message || 'Falha no login, tente novamente.');
+            }
+
+            // Exibir tentativas restantes
+            if (attemptsLeft > 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Tentativas Restantes',
+                    text: `Você tem ${attemptsLeft} tentativas restantes.`,
+                });
+            }
+        } catch (error) {
+            showAlert('error', 'Erro!', 'Houve um erro ao tentar fazer login.');
+        }
+    }
+});
