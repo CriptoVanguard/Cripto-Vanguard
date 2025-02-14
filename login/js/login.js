@@ -63,7 +63,7 @@ loginForm.addEventListener('submit', async function (e) {
             // Se o código de status da resposta for 200
             if (!response.ok) {
                 console.error("Login request failed with status:", response.status);
-                showAlert('error', 'Erro!', 'Falha ao autenticar. Tente novamente.');
+                showAlert('error', 'Erro!', 'Falha ao autenticar. Tente verificar seu email.');
                 return;
             }
 
