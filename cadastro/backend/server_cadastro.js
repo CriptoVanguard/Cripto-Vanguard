@@ -136,9 +136,6 @@ app.get('/api/verify-email', async (req, res) => {
     }
 });
 
-
-
-
 // Função de login de usuário
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
